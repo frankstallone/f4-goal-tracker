@@ -1,13 +1,16 @@
+import { SignOutButton } from '@/components/auth-buttons'
 import { GoalCard } from '@/components/goal-card'
 import { GoalEmptyState } from '@/components/goal-empty-state'
 import { getGoals } from '@/lib/data/goals'
 import { formatCurrencyFromCents } from '@/lib/format'
+import { requireServerSession } from '@/lib/auth-session'
 import type { GoalSummary } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { PlusIcon } from 'lucide-react'
 import Link from 'next/link'
 
 export default async function HomePage() {
+  await requireServerSession()
   const goals = (await getGoals()) as GoalSummary[]
   const totalBalance = goals.reduce(
     (sum: number, goal: { balanceCents: number }) => sum + goal.balanceCents,
@@ -43,6 +46,7 @@ export default async function HomePage() {
                   {formatCurrencyFromCents(totalBalance)}
                 </p>
               </div>
+              <SignOutButton className="border-white/10 bg-white/5 text-slate-100 hover:bg-white/10" />
             </div>
           </header>
 

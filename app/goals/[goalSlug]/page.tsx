@@ -2,10 +2,12 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import { AddTransactionDialog } from '@/components/add-transaction-dialog'
+import { SignOutButton } from '@/components/auth-buttons'
 import { DeleteGoalDialog } from '@/components/delete-goal-dialog'
 import { GoalTransactionsTable } from '@/components/goal-transactions-table'
 import { Badge } from '@/components/ui/badge'
 import { buttonVariants } from '@/components/ui/button'
+import { requireServerSession } from '@/lib/auth-session'
 import { getGoalBySlug, getGoalTransactions } from '@/lib/data/goals'
 import {
   formatCurrencyFromCents,
@@ -20,6 +22,7 @@ interface GoalDetailPageProps {
 
 export default async function GoalDetailPage({ params }: GoalDetailPageProps) {
   const { goalSlug } = await params
+  await requireServerSession()
   const goal = await getGoalBySlug(goalSlug)
   if (!goal) {
     notFound()
@@ -51,6 +54,7 @@ export default async function GoalDetailPage({ params }: GoalDetailPageProps) {
             <div className="flex flex-wrap items-center gap-3">
               <DeleteGoalDialog goalSlug={goal.slug} goalName={goal.name} />
               <AddTransactionDialog goalSlug={goal.slug} goalName={goal.name} />
+              <SignOutButton className="border-white/10 bg-white/5 text-slate-100 hover:bg-white/10" />
             </div>
           </div>
 

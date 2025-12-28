@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 
+import { getServerSession } from '@/lib/auth-session'
 import { getSql } from '@/lib/db'
 import { normalizeTransactionPayload } from '@/lib/transactions'
 
@@ -21,6 +22,11 @@ export async function addTransactionAction(
   prevState: AddTransactionState,
   formData: FormData,
 ): Promise<AddTransactionState> {
+  const session = await getServerSession()
+  if (!session) {
+    return { status: 'error', message: 'Sign in required.' }
+  }
+
   const rawPayload = {
     description: String(formData.get('description') ?? ''),
     amount: String(formData.get('amount') ?? ''),
@@ -89,6 +95,11 @@ export async function deleteGoalAction(
 ): Promise<DeleteGoalState> {
   void prevState
   void formData
+
+  const session = await getServerSession()
+  if (!session) {
+    return { status: 'error', message: 'Sign in required.' }
+  }
 
   const sql = getSql()
   if (!sql) {
