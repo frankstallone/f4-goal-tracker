@@ -1,0 +1,22 @@
+export type Goal = {
+  id: string
+  slug: string
+  name: string
+  description: string | null
+  coverImageUrl: string | null
+  champions: string[]
+  targetAmountCents: number | null
+}
+
+export type GoalSummary = Goal & {
+  balanceCents: number
+}
+
+export type GoalTransaction = {
+  id: string
+  goalId: string
+  description: string
+  amountCents: number
+  transactedOn: string
+  createdBy: string | null
+}
