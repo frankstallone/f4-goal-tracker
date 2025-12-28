@@ -74,7 +74,11 @@ export function DeleteGoalDialog({
           ) : null}
           <AlertDialogFooter className="mt-6 gap-3">
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction variant="destructive" disabled={pending}>
+            <AlertDialogAction
+              type="submit"
+              variant="destructive"
+              disabled={pending}
+            >
               {pending ? 'Removing...' : 'Delete'}
             </AlertDialogAction>
           </AlertDialogFooter>
