@@ -408,9 +408,9 @@ export function NewGoalForm() {
         <FieldLabel htmlFor="champions">Champions</FieldLabel>
         <FieldContent>
           <Combobox
-            selectionMode="multiple"
-            selectedValue={champions}
-            onSelectedValueChange={handleChampionsChange}
+            multiple
+            value={champions}
+            onValueChange={handleChampionsChange}
             inputValue={championQuery}
             onInputValueChange={setChampionQuery}
             items={championItems}
