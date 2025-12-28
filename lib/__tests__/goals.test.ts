@@ -17,6 +17,11 @@ describe('normalizeGoalPayload', () => {
       description: ' Tuition ',
       targetAmount: '1000',
       coverImageUrl: 'https://example.com/cover.jpg',
+      coverImageSource: 'unsplash',
+      coverImageAttributionName: 'Student Photographer',
+      coverImageAttributionUrl:
+        'https://unsplash.com/@ava?utm_source=f4_goal_tracker&utm_medium=referral',
+      coverImageId: 'photo-ava',
       champions: 'Frank, Owner One',
     })
 
@@ -25,6 +30,11 @@ describe('normalizeGoalPayload', () => {
       description: 'Tuition',
       targetAmountCents: 100000,
       coverImageUrl: 'https://example.com/cover.jpg',
+      coverImageSource: 'unsplash',
+      coverImageAttributionName: 'Student Photographer',
+      coverImageAttributionUrl:
+        'https://unsplash.com/@ava?utm_source=f4_goal_tracker&utm_medium=referral',
+      coverImageId: 'photo-ava',
       champions: ['Frank', 'Owner One'],
     })
   })

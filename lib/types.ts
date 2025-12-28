@@ -4,6 +4,10 @@ export type Goal = {
   name: string
   description: string | null
   coverImageUrl: string | null
+  coverImageSource: string | null
+  coverImageAttributionName: string | null
+  coverImageAttributionUrl: string | null
+  coverImageId: string | null
   champions: string[]
   targetAmountCents: number | null
 }

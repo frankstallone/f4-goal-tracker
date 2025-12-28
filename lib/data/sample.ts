@@ -9,6 +9,11 @@ export const sampleGoals: Goal[] = [
     description: 'Long-range retirement runway for Owner One.',
     coverImageUrl:
       'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600&auto=format&fit=crop',
+    coverImageSource: 'unsplash',
+    coverImageAttributionName: 'Johannes Plenio',
+    coverImageAttributionUrl:
+      'https://unsplash.com/@jplenio?utm_source=f4_goal_tracker&utm_medium=referral',
+    coverImageId: 'photo-1500530855697-b586d89ba3ee',
     champions: ['Owner One'],
     targetAmountCents: 1_200_000_00,
   },
@@ -19,6 +24,11 @@ export const sampleGoals: Goal[] = [
     description: 'Cash buffer for the next property opportunity.',
     coverImageUrl:
       'https://images.unsplash.com/photo-1489515217757-5fd1be406fef?q=80&w=1600&auto=format&fit=crop',
+    coverImageSource: 'unsplash',
+    coverImageAttributionName: 'Sasha Matveeva',
+    coverImageAttributionUrl:
+      'https://unsplash.com/@sasmat?utm_source=f4_goal_tracker&utm_medium=referral',
+    coverImageId: 'photo-1489515217757-5fd1be406fef',
     champions: ['Owner Two'],
     targetAmountCents: 350_000_00,
   },
@@ -29,6 +39,11 @@ export const sampleGoals: Goal[] = [
     description: 'Tuition and living expenses for Student.',
     coverImageUrl:
       'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1600&auto=format&fit=crop',
+    coverImageSource: 'unsplash',
+    coverImageAttributionName: 'Brooke Cagle',
+    coverImageAttributionUrl:
+      'https://unsplash.com/@brookecagle?utm_source=f4_goal_tracker&utm_medium=referral',
+    coverImageId: 'photo-1522202176988-66273c2fd55f',
     champions: ['Owner Two', 'Owner One'],
     targetAmountCents: 180_000_00,
   },
@@ -39,6 +54,11 @@ export const sampleGoals: Goal[] = [
     description: 'Emergency reserve for the mortgage and escrow.',
     coverImageUrl:
       'https://images.unsplash.com/photo-1501183638710-841dd1904471?q=80&w=1600&auto=format&fit=crop',
+    coverImageSource: 'unsplash',
+    coverImageAttributionName: 'Francesca Tosolini',
+    coverImageAttributionUrl:
+      'https://unsplash.com/@francesca_tosolini?utm_source=f4_goal_tracker&utm_medium=referral',
+    coverImageId: 'photo-1501183638710-841dd1904471',
     champions: ['Owner Two'],
     targetAmountCents: 60_000_00,
   },
@@ -49,6 +69,11 @@ export const sampleGoals: Goal[] = [
     description: 'Family travel, hotels, and long-haul flights.',
     coverImageUrl:
       'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600&auto=format&fit=crop',
+    coverImageSource: 'unsplash',
+    coverImageAttributionName: 'Johannes Plenio',
+    coverImageAttributionUrl:
+      'https://unsplash.com/@jplenio?utm_source=f4_goal_tracker&utm_medium=referral',
+    coverImageId: 'photo-1500530855697-b586d89ba3ee',
     champions: ['Owner One'],
     targetAmountCents: 25_000_00,
   },
@@ -59,6 +84,11 @@ export const sampleGoals: Goal[] = [
     description: 'Savings to reduce car payments and upgrades.',
     coverImageUrl:
       'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1600&auto=format&fit=crop',
+    coverImageSource: 'unsplash',
+    coverImageAttributionName: 'Campbell Boulanger',
+    coverImageAttributionUrl:
+      'https://unsplash.com/@cboulanger?utm_source=f4_goal_tracker&utm_medium=referral',
+    coverImageId: 'photo-1503376780353-7e6692767b70',
     champions: ['Owner Two'],
     targetAmountCents: 40_000_00,
   },
@@ -69,6 +99,11 @@ export const sampleGoals: Goal[] = [
     description: 'Renovation projects, contractors, and upkeep.',
     coverImageUrl:
       'https://images.unsplash.com/photo-1481277542470-605612bd2d61?q=80&w=1600&auto=format&fit=crop',
+    coverImageSource: 'unsplash',
+    coverImageAttributionName: 'R architecture',
+    coverImageAttributionUrl:
+      'https://unsplash.com/@rarchitecture_melbourne?utm_source=f4_goal_tracker&utm_medium=referral',
+    coverImageId: 'photo-1481277542470-605612bd2d61',
     champions: ['Owner Two', 'Owner One'],
     targetAmountCents: 75_000_00,
   },

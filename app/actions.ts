@@ -20,6 +20,14 @@ export async function addGoalAction(
     description: String(formData.get('description') ?? ''),
     targetAmount: String(formData.get('targetAmount') ?? ''),
     coverImageUrl: String(formData.get('coverImageUrl') ?? ''),
+    coverImageSource: String(formData.get('coverImageSource') ?? ''),
+    coverImageAttributionName: String(
+      formData.get('coverImageAttributionName') ?? '',
+    ),
+    coverImageAttributionUrl: String(
+      formData.get('coverImageAttributionUrl') ?? '',
+    ),
+    coverImageId: String(formData.get('coverImageId') ?? ''),
     champions: String(formData.get('champions') ?? ''),
   }
 
@@ -58,12 +66,27 @@ export async function addGoalAction(
   }
 
   await sql`
-    INSERT INTO goals (slug, name, description, cover_image_url, champions, target_amount_cents)
+    INSERT INTO goals (
+      slug,
+      name,
+      description,
+      cover_image_url,
+      cover_image_source,
+      cover_image_attribution_name,
+      cover_image_attribution_url,
+      cover_image_id,
+      champions,
+      target_amount_cents
+    )
     VALUES (
       ${slug},
       ${data.name},
       ${data.description},
       ${data.coverImageUrl},
+      ${data.coverImageSource},
+      ${data.coverImageAttributionName},
+      ${data.coverImageAttributionUrl},
+      ${data.coverImageId},
       ${data.champions},
       ${data.targetAmountCents}
     )

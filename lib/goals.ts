@@ -3,6 +3,10 @@ export type GoalPayload = {
   description?: string
   targetAmount?: string
   coverImageUrl?: string
+  coverImageSource?: string
+  coverImageAttributionName?: string
+  coverImageAttributionUrl?: string
+  coverImageId?: string
   champions?: string
 }
 
@@ -11,6 +15,10 @@ export type NormalizedGoalPayload = {
   description: string | null
   targetAmountCents: number | null
   coverImageUrl: string | null
+  coverImageSource: string | null
+  coverImageAttributionName: string | null
+  coverImageAttributionUrl: string | null
+  coverImageId: string | null
   champions: string[]
 }
 
@@ -56,6 +64,12 @@ export function normalizeGoalPayload(
       description: payload.description?.trim() || null,
       targetAmountCents,
       coverImageUrl: payload.coverImageUrl?.trim() || null,
+      coverImageSource: payload.coverImageSource?.trim() || null,
+      coverImageAttributionName:
+        payload.coverImageAttributionName?.trim() || null,
+      coverImageAttributionUrl:
+        payload.coverImageAttributionUrl?.trim() || null,
+      coverImageId: payload.coverImageId?.trim() || null,
       champions,
     },
   }

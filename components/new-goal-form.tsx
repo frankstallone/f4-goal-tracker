@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
 import { addGoalAction, type AddGoalState } from '@/app/actions'
@@ -21,6 +22,8 @@ import {
 } from '@/components/ui/input-group'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { createDebouncer } from '@/lib/debounce'
+import { MIN_UNSPLASH_QUERY_LENGTH, shouldSearchUnsplash } from '@/lib/unsplash'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -42,6 +45,154 @@ export function NewGoalForm() {
       toast.error(state.message)
     }
   }, [router, state.message, state.status])
+
+  const [coverImageUrl, setCoverImageUrl] = React.useState('')
+  const [coverImageSource, setCoverImageSource] = React.useState('')
+  const [coverImageAttributionName, setCoverImageAttributionName] =
+    React.useState('')
+  const [coverImageAttributionUrl, setCoverImageAttributionUrl] =
+    React.useState('')
+  const [coverImageId, setCoverImageId] = React.useState('')
+  const [searchQuery, setSearchQuery] = React.useState('')
+  const [searchResults, setSearchResults] = React.useState<
+    Array<{
+      id: string
+      alt: string
+      urls: { small?: string; regular?: string }
+      user: { name?: string; username?: string }
+      links: { downloadLocation?: string }
+    }>
+  >([])
+  const [isSearching, setIsSearching] = React.useState(false)
+  const [searchError, setSearchError] = React.useState<string | null>(null)
+  const searchCacheRef = React.useRef<Map<string, typeof searchResults>>(
+    new Map(),
+  )
+  const debouncerRef = React.useRef(createDebouncer(400))
+  const abortRef = React.useRef<AbortController | null>(null)
+
+  const runSearch = React.useCallback(async (query: string) => {
+    const normalized = query.trim()
+    if (!shouldSearchUnsplash(normalized)) {
+      return
+    }
+
+    const cached = searchCacheRef.current.get(normalized)
+    if (cached) {
+      setSearchResults(cached)
+      setSearchError(null)
+      return
+    }
+
+    abortRef.current?.abort()
+    const controller = new AbortController()
+    abortRef.current = controller
+
+    setIsSearching(true)
+    setSearchError(null)
+    try {
+      const response = await fetch(
+        `/api/unsplash/search?query=${encodeURIComponent(normalized)}`,
+        { signal: controller.signal },
+      )
+      if (!response.ok) {
+        throw new Error('Search failed')
+      }
+      const data = await response.json()
+      const results = data.results ?? []
+      searchCacheRef.current.set(normalized, results)
+      setSearchResults(results)
+    } catch (error) {
+      if ((error as { name?: string }).name === 'AbortError') {
+        return
+      }
+      setSearchError('Unable to load Unsplash results. Try again.')
+    } finally {
+      if (!controller.signal.aborted) {
+        setIsSearching(false)
+      }
+    }
+  }, [])
+
+  React.useEffect(() => {
+    const debouncer = debouncerRef.current
+    debouncer.cancel()
+
+    if (!searchQuery.trim()) {
+      setSearchResults([])
+      setSearchError(null)
+      setIsSearching(false)
+      return
+    }
+
+    if (!shouldSearchUnsplash(searchQuery)) {
+      setSearchError(
+        `Type at least ${MIN_UNSPLASH_QUERY_LENGTH} characters to search.`,
+      )
+      setSearchResults([])
+      setIsSearching(false)
+      return
+    }
+
+    setSearchError(null)
+    debouncer.schedule(() => {
+      void runSearch(searchQuery)
+    })
+
+    return () => {
+      debouncer.cancel()
+    }
+  }, [runSearch, searchQuery])
+
+  const handleSearch = async () => {
+    const query = searchQuery.trim()
+    if (!shouldSearchUnsplash(query)) return
+    await runSearch(query)
+  }
+
+  const handleSelectImage = async (photo: {
+    id: string
+    urls: { regular?: string }
+    user: { name?: string; username?: string }
+    links: { downloadLocation?: string }
+  }) => {
+    const utm = 'utm_source=f4_goal_tracker&utm_medium=referral'
+    const username = photo.user.username ?? ''
+    const attributionUrl = username
+      ? `https://unsplash.com/@${username}?${utm}`
+      : `https://unsplash.com/?${utm}`
+
+    setCoverImageUrl(photo.urls.regular ?? '')
+    setCoverImageSource('unsplash')
+    setCoverImageAttributionName(photo.user.name ?? 'Unsplash')
+    setCoverImageAttributionUrl(attributionUrl)
+    setCoverImageId(photo.id)
+
+    if (photo.links.downloadLocation) {
+      void fetch('/api/unsplash/download', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          downloadLocation: photo.links.downloadLocation,
+        }),
+      })
+    }
+  }
+
+  const handleCustomUrl = (value: string) => {
+    setCoverImageUrl(value)
+    if (!value) {
+      setCoverImageSource('')
+      setCoverImageAttributionName('')
+      setCoverImageAttributionUrl('')
+      setCoverImageId('')
+      return
+    }
+    setCoverImageSource('custom')
+    setCoverImageAttributionName('')
+    setCoverImageAttributionUrl('')
+    setCoverImageId('')
+  }
 
   return (
     <Form action={formAction} className="space-y-6">
@@ -103,30 +254,139 @@ export function NewGoalForm() {
         </FieldContent>
       </Field>
 
-      <FieldGroup className="grid gap-5 sm:grid-cols-2">
-        <Field>
-          <FieldLabel htmlFor="coverImageUrl">Cover image URL</FieldLabel>
-          <FieldContent>
-            <Input
-              id="coverImageUrl"
-              name="coverImageUrl"
-              placeholder="https://images.unsplash.com/..."
-              className="bg-white/5"
-            />
-          </FieldContent>
-        </Field>
-        <Field>
-          <FieldLabel htmlFor="champions">Champions</FieldLabel>
-          <FieldContent>
-            <Input
-              id="champions"
-              name="champions"
-              placeholder="Frank, Owner One"
-              className="bg-white/5"
-            />
-          </FieldContent>
-        </Field>
-      </FieldGroup>
+      <Field>
+        <FieldLabel>Cover image (Unsplash)</FieldLabel>
+        <FieldContent>
+          <div className="space-y-4">
+            <div className="flex flex-wrap gap-3">
+              <Input
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                placeholder="Search Unsplash (e.g. mountain, home, college)"
+                className="flex-1 bg-white/5"
+              />
+              <Button
+                type="button"
+                onClick={handleSearch}
+                disabled={isSearching || !shouldSearchUnsplash(searchQuery)}
+              >
+                {isSearching ? 'Searching...' : 'Search'}
+              </Button>
+            </div>
+            {searchError ? (
+              <p className="text-sm text-rose-300">{searchError}</p>
+            ) : null}
+            <div className="grid gap-3 sm:grid-cols-3">
+              {searchResults.map((photo) => (
+                <button
+                  key={photo.id}
+                  type="button"
+                  onClick={() => handleSelectImage(photo)}
+                  className={cn(
+                    'group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5',
+                    coverImageId === photo.id && 'ring-2 ring-emerald-300/70',
+                  )}
+                >
+                  {photo.urls.small ? (
+                    <Image
+                      src={photo.urls.small}
+                      alt={photo.alt}
+                      width={240}
+                      height={160}
+                      className="h-24 w-full object-cover transition duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="h-24 w-full bg-slate-900/40" />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent" />
+                  <span className="absolute bottom-2 left-2 text-xs text-slate-200">
+                    {photo.user.name}
+                  </span>
+                </button>
+              ))}
+              {!searchResults.length && searchQuery ? (
+                <div className="rounded-2xl border border-dashed border-white/10 p-4 text-sm text-slate-400 sm:col-span-3">
+                  No results yet. Try another search keyword.
+                </div>
+              ) : null}
+            </div>
+
+            {coverImageUrl ? (
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-slate-300">
+                <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
+                  Selected image
+                </p>
+                {coverImageAttributionName && coverImageAttributionUrl ? (
+                  <p className="mt-2 text-sm text-slate-200">
+                    Photo by{' '}
+                    <a
+                      href={coverImageAttributionUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="underline underline-offset-4"
+                    >
+                      {coverImageAttributionName}
+                    </a>{' '}
+                    on{' '}
+                    <a
+                      href={`https://unsplash.com/?utm_source=f4_goal_tracker&utm_medium=referral`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="underline underline-offset-4"
+                    >
+                      Unsplash
+                    </a>
+                    .
+                  </p>
+                ) : (
+                  <p className="mt-2 text-sm text-slate-200">
+                    Custom image selected.
+                  </p>
+                )}
+              </div>
+            ) : null}
+
+            <div className="space-y-2">
+              <FieldLabel htmlFor="coverImageCustomUrl">
+                Custom image URL (optional)
+              </FieldLabel>
+              <Input
+                id="coverImageCustomUrl"
+                placeholder="https://images.unsplash.com/..."
+                className="bg-white/5"
+                value={coverImageSource === 'custom' ? coverImageUrl : ''}
+                onChange={(event) => handleCustomUrl(event.target.value)}
+              />
+            </div>
+          </div>
+        </FieldContent>
+      </Field>
+
+      <Field>
+        <FieldLabel htmlFor="champions">Champions</FieldLabel>
+        <FieldContent>
+          <Input
+            id="champions"
+            name="champions"
+            placeholder="Frank, Owner One"
+            className="bg-white/5"
+          />
+        </FieldContent>
+      </Field>
+
+      <input type="hidden" name="coverImageUrl" value={coverImageUrl} />
+      <input type="hidden" name="coverImageSource" value={coverImageSource} />
+      <input
+        type="hidden"
+        name="coverImageAttributionName"
+        value={coverImageAttributionName}
+      />
+      <input
+        type="hidden"
+        name="coverImageAttributionUrl"
+        value={coverImageAttributionUrl}
+      />
+      <input type="hidden" name="coverImageId" value={coverImageId} />
 
       {state.message ? (
         <p
