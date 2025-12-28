@@ -37,7 +37,7 @@ export async function addTransactionAction(
     createdBy: rawPayload.createdBy,
   })
 
-  if (errors) {
+  if (errors || !data) {
     return {
       status: 'error',
       message: 'Fix the highlighted fields before saving.',
@@ -53,9 +53,9 @@ export async function addTransactionAction(
     }
   }
 
-  const goalRows = await sql<{ id: string }[]>`
+  const goalRows = (await sql`
     SELECT id FROM goals WHERE slug = ${goalSlug} LIMIT 1
-  `
+  `) as { id: string }[]
 
   const goal = goalRows[0]
   if (!goal) {
@@ -98,9 +98,9 @@ export async function deleteGoalAction(
     }
   }
 
-  const goalRows = await sql<{ id: string }[]>`
+  const goalRows = (await sql`
     SELECT id FROM goals WHERE slug = ${goalSlug} LIMIT 1
-  `
+  `) as { id: string }[]
 
   const goal = goalRows[0]
   if (!goal) {

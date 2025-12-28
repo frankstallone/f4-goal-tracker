@@ -87,12 +87,12 @@ export function GoalTransactionsTable({
     <div className="rounded-3xl border border-white/10 bg-white/5 p-6 text-slate-100 shadow-[0_30px_80px_-50px_rgba(15,23,42,0.6)]">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <p className="text-xs uppercase tracking-[0.4em] text-slate-400">
+          <p className="text-xs uppercase tracking-widest text-slate-400">
             Transactions
           </p>
           <h2 className="text-2xl font-semibold">Goal ledger</h2>
         </div>
-        <div className="rounded-full bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.3em] text-slate-100">
+        <div className="rounded-full bg-white/10 px-4 py-2 text-xs uppercase tracking-widest text-slate-100">
           {transactions.length} entries
         </div>
       </div>
@@ -106,7 +106,7 @@ export function GoalTransactionsTable({
                   return (
                     <th
                       key={header.id}
-                      className="px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400"
+                      className="px-4 py-3 text-xs font-semibold uppercase tracking-widest text-slate-400"
                     >
                       {header.isPlaceholder ? null : (
                         <button

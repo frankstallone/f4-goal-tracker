@@ -23,7 +23,7 @@ export default function NewGoalPage() {
 
           <section className="mt-8 space-y-6">
             <div>
-              <p className="text-xs uppercase tracking-[0.4em] text-slate-400">
+              <p className="text-xs uppercase tracking-widest text-slate-400">
                 New goal
               </p>
               <h1 className="mt-3 text-4xl font-semibold tracking-tight">

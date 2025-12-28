@@ -32,7 +32,7 @@ export async function addGoalAction(
   }
 
   const { data, errors } = normalizeGoalPayload(rawPayload)
-  if (errors) {
+  if (errors || !data) {
     return {
       status: 'error',
       message: 'Fix the highlighted fields before saving.',
@@ -46,11 +46,11 @@ export async function addGoalAction(
   }
 
   const baseSlug = slugifyGoalName(data.name)
-  const existingSlugs = await sql<{ slug: string }[]>`
+  const existingSlugs = (await sql`
     SELECT slug
     FROM goals
     WHERE slug LIKE ${baseSlug + '%'}
-  `
+  `) as { slug: string }[]
 
   let slug = baseSlug
   if (existingSlugs.length) {

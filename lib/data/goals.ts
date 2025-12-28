@@ -4,16 +4,16 @@ import { groupTotalsByGoal } from '@/lib/ledger'
 import type { GoalSummary, GoalTransaction } from '@/lib/types'
 import { sampleGoalSummaries, sampleTransactions } from '@/lib/data/sample'
 
+type GoalRow = GoalSummary & {
+  champions: string[] | null
+  balance_cents: number | null
+}
+
 export const getGoals = cache(async () => {
   const sql = getSql()
   if (!sql) return sampleGoalSummaries
 
-  const rows = await sql<
-    (GoalSummary & {
-      champions: string[] | null
-      balance_cents: number | null
-    })[]
-  >`
+  const rows = (await sql`
     SELECT
       g.id,
       g.slug,
@@ -31,7 +31,7 @@ export const getGoals = cache(async () => {
     LEFT JOIN goal_transactions t ON t.goal_id = g.id
     GROUP BY g.id
     ORDER BY g.created_at DESC
-  `
+  `) as GoalRow[]
 
   return rows.map((row) => ({
     id: row.id,
@@ -55,12 +55,7 @@ export const getGoalBySlug = cache(async (slug: string) => {
     return sampleGoalSummaries.find((goal) => goal.slug === slug) ?? null
   }
 
-  const rows = await sql<
-    (GoalSummary & {
-      champions: string[] | null
-      balance_cents: number | null
-    })[]
-  >`
+  const rows = (await sql`
     SELECT
       g.id,
       g.slug,
@@ -79,7 +74,7 @@ export const getGoalBySlug = cache(async (slug: string) => {
     WHERE g.slug = ${slug}
     GROUP BY g.id
     LIMIT 1
-  `
+  `) as GoalRow[]
 
   const row = rows[0]
   if (!row) return null
@@ -108,7 +103,7 @@ export const getGoalTransactions = cache(async (goalId: string) => {
     )
   }
 
-  const rows = await sql<GoalTransaction[]>`
+  const rows = (await sql`
     SELECT
       id,
       goal_id AS "goalId",
@@ -119,7 +114,7 @@ export const getGoalTransactions = cache(async (goalId: string) => {
     FROM goal_transactions
     WHERE goal_id = ${goalId}
     ORDER BY transacted_on DESC, created_at DESC
-  `
+  `) as GoalTransaction[]
 
   return rows.map((row) => ({
     ...row,
@@ -142,11 +137,11 @@ export const getGoalTotals = cache(async () => {
     )
   }
 
-  const rows = await sql<{ goalId: string; balance: number }[]>`
+  const rows = (await sql`
     SELECT goal_id AS "goalId", COALESCE(SUM(amount_cents), 0)::int AS balance
     FROM goal_transactions
     GROUP BY goal_id
-  `
+  `) as { goalId: string; balance: number }[]
 
   return rows.reduce<Record<string, number>>((totals, row) => {
     totals[row.goalId] = Number(row.balance)

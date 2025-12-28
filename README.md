@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# F4 Goal Tracker
 
-## Getting Started
+F4 Goal Tracker is a goal‑based savings tracker built with Next.js, shadcn/Base UI, and a Neon Postgres database. It lets you organize deposits and withdrawals into goals, view per‑goal ledgers, and choose Unsplash cover imagery with attribution.
 
-First, run the development server:
+## Features
+
+- Goal cards with balances, champions, and cover images.
+- Per‑goal ledger with deposits/withdrawals and net movement.
+- Goal creation page with Unsplash search + attribution tracking.
+- Toast confirmations for create/delete actions.
+- Vitest 4 test suite.
+
+## Local Development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create `.env.local` with:
 
-## Learn More
+```bash
+DATABASE_URL=postgres://...
+UNSPLASH_ACCESS_KEY=your_key
+```
 
-To learn more about Next.js, take a look at the following resources:
+Apply `db/schema.sql` to initialize the database.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `npm run dev` – start the dev server.
+- `npm run build` – production build.
+- `npm run start` – run the build locally.
+- `npm run lint` – ESLint.
+- `npm run test` – Vitest.
+- `npm run format` – Prettier.
 
-## Deploy on Vercel
+## Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Deploy on Vercel. Ensure `DATABASE_URL` and `UNSPLASH_ACCESS_KEY` are set for dev/preview/prod environments.

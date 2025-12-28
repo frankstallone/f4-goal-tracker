@@ -2,13 +2,17 @@ import { GoalCard } from '@/components/goal-card'
 import { GoalEmptyState } from '@/components/goal-empty-state'
 import { getGoals } from '@/lib/data/goals'
 import { formatCurrencyFromCents } from '@/lib/format'
+import type { GoalSummary } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { PlusIcon } from 'lucide-react'
 import Link from 'next/link'
 
 export default async function HomePage() {
-  const goals = await getGoals()
-  const totalBalance = goals.reduce((sum, goal) => sum + goal.balanceCents, 0)
+  const goals = (await getGoals()) as GoalSummary[]
+  const totalBalance = goals.reduce(
+    (sum: number, goal: { balanceCents: number }) => sum + goal.balanceCents,
+    0,
+  )
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100">
@@ -18,7 +22,7 @@ export default async function HomePage() {
         <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-10 px-6 py-12">
           <header className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="space-y-3">
-              <p className="text-xs uppercase tracking-[0.4em] text-slate-400">
+              <p className="text-xs uppercase tracking-widest text-slate-400">
                 Preferred Deposit
               </p>
               <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">
@@ -31,14 +35,14 @@ export default async function HomePage() {
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              <div className="rounded-full bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.3em] text-slate-200">
+              <div className="rounded-full bg-white/10 px-4 py-2 text-xs uppercase tracking-widest text-slate-200">
                 Main
               </div>
-              <div className="rounded-full border border-white/10 px-4 py-2 text-xs uppercase tracking-[0.3em] text-slate-400">
+              <div className="rounded-full border border-white/10 px-4 py-2 text-xs uppercase tracking-widest text-slate-400">
                 Sum
               </div>
               <div className="rounded-3xl border border-white/10 bg-white/5 px-5 py-4 text-right">
-                <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
+                <p className="text-xs uppercase tracking-widest text-slate-400">
                   Total balance
                 </p>
                 <p className="text-2xl font-semibold text-white">
@@ -65,7 +69,7 @@ export default async function HomePage() {
                       <PlusIcon className="h-5 w-5 text-slate-200" />
                     </div>
                     <div className="space-y-2">
-                      <p className="text-[0.65rem] uppercase tracking-[0.45em] text-slate-400">
+                      <p className="text-xs uppercase tracking-widest text-slate-400">
                         New goal
                       </p>
                       <p className="text-lg font-semibold text-white">

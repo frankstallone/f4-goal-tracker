@@ -4,7 +4,7 @@ export default function NotFound() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-slate-100">
       <div className="max-w-lg rounded-3xl border border-white/10 bg-white/5 p-8 text-center">
-        <p className="text-xs uppercase tracking-[0.4em] text-slate-400">404</p>
+        <p className="text-xs uppercase tracking-widest text-slate-400">404</p>
         <h1 className="mt-4 text-3xl font-semibold">Goal not found</h1>
         <p className="mt-3 text-sm text-slate-400">
           The goal you requested does not exist yet. Head back to the main

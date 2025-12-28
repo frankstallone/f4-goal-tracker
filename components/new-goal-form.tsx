@@ -355,7 +355,7 @@ export function NewGoalForm() {
 
             {coverImageUrl ? (
               <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-slate-300">
-                <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
+                <p className="text-xs uppercase tracking-widest text-slate-400">
                   Selected image
                 </p>
                 {coverImageAttributionName && coverImageAttributionUrl ? (
@@ -417,9 +417,7 @@ export function NewGoalForm() {
           >
             <ComboboxChips ref={championAnchor} aria-label="Champions">
               {champions.map((champion) => (
-                <ComboboxChip key={champion} value={champion}>
-                  {champion}
-                </ComboboxChip>
+                <ComboboxChip key={champion}>{champion}</ComboboxChip>
               ))}
               <ComboboxChipsInput
                 id="champions"

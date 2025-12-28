@@ -57,7 +57,7 @@ export default async function GoalDetailPage({ params }: GoalDetailPageProps) {
           <section className="mt-8 grid gap-8 lg:grid-cols-[1.4fr_1fr]">
             <div className="space-y-6">
               <div>
-                <p className="text-xs uppercase tracking-[0.4em] text-slate-400">
+                <p className="text-xs uppercase tracking-widest text-slate-400">
                   Goal
                 </p>
                 <h1 className="text-4xl font-semibold tracking-tight">
@@ -72,7 +72,7 @@ export default async function GoalDetailPage({ params }: GoalDetailPageProps) {
 
               <div className="flex flex-wrap items-center gap-3">
                 {goal.champions.length ? (
-                  goal.champions.map((champion) => (
+                  goal.champions.map((champion: string) => (
                     <Badge
                       key={champion}
                       variant="secondary"
@@ -92,7 +92,7 @@ export default async function GoalDetailPage({ params }: GoalDetailPageProps) {
               </div>
 
               <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-                <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
+                <p className="text-xs uppercase tracking-widest text-slate-400">
                   Current balance
                 </p>
                 <p className="mt-2 text-3xl font-semibold text-white">
@@ -108,7 +108,7 @@ export default async function GoalDetailPage({ params }: GoalDetailPageProps) {
 
             <div className="space-y-4">
               <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-                <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
+                <p className="text-xs uppercase tracking-widest text-slate-400">
                   Deposits
                 </p>
                 <p className="mt-2 text-2xl font-semibold text-emerald-300">
@@ -116,7 +116,7 @@ export default async function GoalDetailPage({ params }: GoalDetailPageProps) {
                 </p>
               </div>
               <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-                <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
+                <p className="text-xs uppercase tracking-widest text-slate-400">
                   Withdrawals
                 </p>
                 <p className="mt-2 text-2xl font-semibold text-rose-300">
@@ -126,7 +126,7 @@ export default async function GoalDetailPage({ params }: GoalDetailPageProps) {
                 </p>
               </div>
               <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-                <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
+                <p className="text-xs uppercase tracking-widest text-slate-400">
                   Net movement
                 </p>
                 <p className="mt-2 text-2xl font-semibold text-white">

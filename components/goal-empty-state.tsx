@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { SparklesIcon, PlusIcon } from 'lucide-react'
 
-import { Badge } from '@/components/ui/badge'
 import {
   Card,
   CardContent,
@@ -18,7 +17,7 @@ export function GoalEmptyState() {
     <Card className="col-span-full border-white/10 bg-white/5 text-slate-100 shadow-[0_20px_60px_-40px_rgba(0,0,0,0.8)]">
       <CardHeader className="space-y-3">
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 text-xs uppercase tracking-[0.35em] text-slate-400">
+          <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-slate-400">
             <SparklesIcon className="h-3.5 w-3.5" />
             Ready to start
           </div>
@@ -38,7 +37,7 @@ export function GoalEmptyState() {
         </p>
       </CardContent>
       <CardFooter className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-xs uppercase tracking-[0.3em] text-slate-500">
+        <p className="text-xs uppercase tracking-widest text-slate-500">
           Get started
         </p>
         <Link

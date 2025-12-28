@@ -52,7 +52,7 @@ export function GoalCard({ goal, index }: GoalCardProps) {
         <div className="relative">
           <div className="h-40 w-full" />
           <CardHeader className="space-y-2 px-6 pb-2 pt-2">
-            <p className="text-[0.65rem] uppercase tracking-[0.45em] text-slate-400">
+            <p className="text-xs uppercase tracking-widest text-slate-400">
               Goal
             </p>
             <CardTitle className="text-2xl font-semibold leading-tight tracking-tight text-white">
@@ -66,7 +66,7 @@ export function GoalCard({ goal, index }: GoalCardProps) {
           </CardHeader>
           <CardContent className="space-y-4 px-6 pb-4 pt-2">
             <div>
-              <p className="text-[0.65rem] uppercase tracking-[0.4em] text-slate-400">
+              <p className="text-xs uppercase tracking-widest text-slate-400">
                 Balance
               </p>
               <p className="text-3xl font-semibold text-white">
