@@ -43,9 +43,8 @@ export function DeleteGoalDialog({
 
   React.useEffect(() => {
     if (state.status === 'success') {
-      toast.success(state.message ?? 'Goal deleted.')
       setOpen(false)
-      router.push('/')
+      router.push('/?toast=goal-deleted')
     }
     if (state.status === 'error' && state.message) {
       toast.error(state.message)

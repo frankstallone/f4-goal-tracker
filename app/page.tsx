@@ -1,6 +1,7 @@
 import { SignOutButton } from '@/components/auth-buttons'
 import { GoalCard } from '@/components/goal-card'
 import { GoalEmptyState } from '@/components/goal-empty-state'
+import { RedirectToast } from '@/components/redirect-toast'
 import { getGoals } from '@/lib/data/goals'
 import { formatCurrencyFromCents } from '@/lib/format'
 import { requireServerSession } from '@/lib/auth-session'
@@ -19,6 +20,7 @@ export default async function HomePage() {
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100">
+      <RedirectToast />
       <div className="relative overflow-hidden">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.18),transparent_55%)]" />
         <div className="pointer-events-none absolute -top-32 right-0 h-80 w-80 rounded-full bg-emerald-500/10 blur-3xl" />
