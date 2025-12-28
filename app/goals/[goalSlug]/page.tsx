@@ -1,15 +1,15 @@
-import Link from "next/link"
-import { notFound } from "next/navigation"
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
 
-import { AddTransactionDialog } from "@/components/add-transaction-dialog"
-import { GoalTransactionsTable } from "@/components/goal-transactions-table"
-import { Badge } from "@/components/ui/badge"
-import { getGoalBySlug, getGoalTransactions } from "@/lib/data/goals"
+import { AddTransactionDialog } from '@/components/add-transaction-dialog'
+import { GoalTransactionsTable } from '@/components/goal-transactions-table'
+import { Badge } from '@/components/ui/badge'
+import { getGoalBySlug, getGoalTransactions } from '@/lib/data/goals'
 import {
   formatCurrencyFromCents,
   formatSignedCurrencyFromCents,
-} from "@/lib/format"
-import { splitDepositsWithdrawals, sumAmounts } from "@/lib/ledger"
+} from '@/lib/format'
+import { splitDepositsWithdrawals, sumAmounts } from '@/lib/ledger'
 
 interface GoalDetailPageProps {
   params: Promise<{ goalSlug: string }>
@@ -24,7 +24,9 @@ export default async function GoalDetailPage({ params }: GoalDetailPageProps) {
 
   const transactions = await getGoalTransactions(goal.id)
   const balanceFromTransactions = sumAmounts(transactions)
-  const balance = transactions.length ? balanceFromTransactions : goal.balanceCents
+  const balance = transactions.length
+    ? balanceFromTransactions
+    : goal.balanceCents
   const { deposits, withdrawals } = splitDepositsWithdrawals(transactions)
 
   return (

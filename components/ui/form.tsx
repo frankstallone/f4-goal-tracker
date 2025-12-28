@@ -1,17 +1,17 @@
-import * as React from "react"
+import * as React from 'react'
 
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils'
 
-const Form = React.forwardRef<HTMLFormElement, React.ComponentProps<"form">>(
+const Form = React.forwardRef<HTMLFormElement, React.ComponentProps<'form'>>(
   ({ className, ...props }, ref) => (
     <form
       ref={ref}
       data-slot="form"
-      className={cn("space-y-6", className)}
+      className={cn('space-y-6', className)}
       {...props}
     />
-  )
+  ),
 )
-Form.displayName = "Form"
+Form.displayName = 'Form'
 
 export { Form }

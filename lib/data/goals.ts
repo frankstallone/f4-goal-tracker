@@ -1,18 +1,18 @@
-import { cache } from "react"
-import { getSql } from "@/lib/db"
-import { groupTotalsByGoal } from "@/lib/ledger"
-import type { GoalSummary, GoalTransaction } from "@/lib/types"
-import {
-  sampleGoalSummaries,
-  sampleTransactions,
-} from "@/lib/data/sample"
+import { cache } from 'react'
+import { getSql } from '@/lib/db'
+import { groupTotalsByGoal } from '@/lib/ledger'
+import type { GoalSummary, GoalTransaction } from '@/lib/types'
+import { sampleGoalSummaries, sampleTransactions } from '@/lib/data/sample'
 
 export const getGoals = cache(async () => {
   const sql = getSql()
   if (!sql) return sampleGoalSummaries
 
   const rows = await sql<
-    (GoalSummary & { champions: string[] | null; balance_cents: number | null })[]
+    (GoalSummary & {
+      champions: string[] | null
+      balance_cents: number | null
+    })[]
   >`
     SELECT
       g.id,
@@ -48,7 +48,10 @@ export const getGoalBySlug = cache(async (slug: string) => {
   }
 
   const rows = await sql<
-    (GoalSummary & { champions: string[] | null; balance_cents: number | null })[]
+    (GoalSummary & {
+      champions: string[] | null
+      balance_cents: number | null
+    })[]
   >`
     SELECT
       g.id,
@@ -84,7 +87,9 @@ export const getGoalBySlug = cache(async (slug: string) => {
 export const getGoalTransactions = cache(async (goalId: string) => {
   const sql = getSql()
   if (!sql) {
-    return sampleTransactions.filter((transaction) => transaction.goalId === goalId)
+    return sampleTransactions.filter(
+      (transaction) => transaction.goalId === goalId,
+    )
   }
 
   const rows = await sql<GoalTransaction[]>`
@@ -104,7 +109,7 @@ export const getGoalTransactions = cache(async (goalId: string) => {
     ...row,
     amountCents: Number(row.amountCents),
     transactedOn:
-      typeof row.transactedOn === "string"
+      typeof row.transactedOn === 'string'
         ? row.transactedOn
         : new Date(row.transactedOn).toISOString().slice(0, 10),
   }))
@@ -117,7 +122,7 @@ export const getGoalTotals = cache(async () => {
       sampleTransactions.map((transaction) => ({
         goalId: transaction.goalId,
         amountCents: transaction.amountCents,
-      }))
+      })),
     )
   }
 

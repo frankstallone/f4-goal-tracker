@@ -19,26 +19,26 @@ export type TransactionValidationResult = {
 }
 
 export function normalizeTransactionPayload(
-  payload: TransactionPayload
+  payload: TransactionPayload,
 ): TransactionValidationResult {
   const errors: Record<string, string> = {}
   const description = payload.description.trim()
 
   if (!description) {
-    errors.description = "Add a description for this entry."
+    errors.description = 'Add a description for this entry.'
   }
 
   const amountValue = Number(payload.amount)
   if (!payload.amount || Number.isNaN(amountValue) || amountValue <= 0) {
-    errors.amount = "Enter a positive dollar amount."
+    errors.amount = 'Enter a positive dollar amount.'
   }
 
-  if (payload.direction !== "deposit" && payload.direction !== "withdrawal") {
-    errors.direction = "Choose deposit or withdrawal."
+  if (payload.direction !== 'deposit' && payload.direction !== 'withdrawal') {
+    errors.direction = 'Choose deposit or withdrawal.'
   }
 
   if (!/^\d{4}-\d{2}-\d{2}$/.test(payload.transactedOn)) {
-    errors.transactedOn = "Use a valid date."
+    errors.transactedOn = 'Use a valid date.'
   }
 
   if (Object.keys(errors).length) {
@@ -47,7 +47,7 @@ export function normalizeTransactionPayload(
 
   const amountCents = Math.round(amountValue * 100)
   const signedAmount =
-    payload.direction === "withdrawal" ? -amountCents : amountCents
+    payload.direction === 'withdrawal' ? -amountCents : amountCents
 
   return {
     data: {

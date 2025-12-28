@@ -1,12 +1,12 @@
-"use server"
+'use server'
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath } from 'next/cache'
 
-import { getSql } from "@/lib/db"
-import { normalizeTransactionPayload } from "@/lib/transactions"
+import { getSql } from '@/lib/db'
+import { normalizeTransactionPayload } from '@/lib/transactions'
 
 export type AddTransactionState = {
-  status: "idle" | "success" | "error"
+  status: 'idle' | 'success' | 'error'
   message?: string
   fieldErrors?: Record<string, string>
 }
@@ -14,14 +14,14 @@ export type AddTransactionState = {
 export async function addTransactionAction(
   goalSlug: string,
   prevState: AddTransactionState,
-  formData: FormData
+  formData: FormData,
 ): Promise<AddTransactionState> {
   const rawPayload = {
-    description: String(formData.get("description") ?? ""),
-    amount: String(formData.get("amount") ?? ""),
-    direction: String(formData.get("direction") ?? ""),
-    transactedOn: String(formData.get("transactedOn") ?? ""),
-    createdBy: String(formData.get("createdBy") ?? ""),
+    description: String(formData.get('description') ?? ''),
+    amount: String(formData.get('amount') ?? ''),
+    direction: String(formData.get('direction') ?? ''),
+    transactedOn: String(formData.get('transactedOn') ?? ''),
+    createdBy: String(formData.get('createdBy') ?? ''),
   }
 
   const { data, errors } = normalizeTransactionPayload({
@@ -34,8 +34,8 @@ export async function addTransactionAction(
 
   if (errors) {
     return {
-      status: "error",
-      message: "Fix the highlighted fields before saving.",
+      status: 'error',
+      message: 'Fix the highlighted fields before saving.',
       fieldErrors: errors,
     }
   }
@@ -43,8 +43,8 @@ export async function addTransactionAction(
   const sql = getSql()
   if (!sql) {
     return {
-      status: "error",
-      message: "DATABASE_URL is not configured yet.",
+      status: 'error',
+      message: 'DATABASE_URL is not configured yet.',
     }
   }
 
@@ -54,7 +54,7 @@ export async function addTransactionAction(
 
   const goal = goalRows[0]
   if (!goal) {
-    return { status: "error", message: "Goal not found." }
+    return { status: 'error', message: 'Goal not found.' }
   }
 
   await sql`
@@ -68,11 +68,11 @@ export async function addTransactionAction(
     )
   `
 
-  revalidatePath("/")
+  revalidatePath('/')
   revalidatePath(`/goals/${goalSlug}`)
 
   return {
-    status: "success",
-    message: "Transaction added.",
+    status: 'success',
+    message: 'Transaction added.',
   }
 }

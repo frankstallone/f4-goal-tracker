@@ -1,14 +1,14 @@
-"use client"
+'use client'
 
-import * as React from "react"
-import { format } from "date-fns"
+import * as React from 'react'
+import { format } from 'date-fns'
 
 import {
   addTransactionAction,
   type AddTransactionState,
-} from "@/app/goals/[goalSlug]/actions"
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
+} from '@/app/goals/[goalSlug]/actions'
+import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
 import {
   Dialog,
   DialogContent,
@@ -17,38 +17,38 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from '@/components/ui/dialog'
 import {
   Field,
   FieldContent,
   FieldError,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field"
-import { Form } from "@/components/ui/form"
+} from '@/components/ui/field'
+import { Form } from '@/components/ui/form'
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
   InputGroupText,
-} from "@/components/ui/input-group"
-import { Input } from "@/components/ui/input"
+} from '@/components/ui/input-group'
+import { Input } from '@/components/ui/input'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
+} from '@/components/ui/popover'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
-import { cn } from "@/lib/utils"
+} from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
+import { cn } from '@/lib/utils'
 
-const initialState: AddTransactionState = { status: "idle" }
+const initialState: AddTransactionState = { status: 'idle' }
 
 type AddTransactionDialogProps = {
   goalSlug: string
@@ -61,29 +61,33 @@ export function AddTransactionDialog({
 }: AddTransactionDialogProps) {
   const [open, setOpen] = React.useState(false)
   const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(
-    new Date()
+    new Date(),
   )
   const [state, formAction, pending] = React.useActionState(
     addTransactionAction.bind(null, goalSlug),
-    initialState
+    initialState,
   )
   const formRef = React.useRef<HTMLFormElement | null>(null)
 
   React.useEffect(() => {
-    if (state.status === "success") {
+    if (state.status === 'success') {
       formRef.current?.reset()
       setSelectedDate(new Date())
       setOpen(false)
     }
   }, [state.status])
 
-  const formattedDate = selectedDate ? format(selectedDate, "PPP") : "Pick a date"
-  const dateValue = selectedDate ? format(selectedDate, "yyyy-MM-dd") : ""
+  const formattedDate = selectedDate
+    ? format(selectedDate, 'PPP')
+    : 'Pick a date'
+  const dateValue = selectedDate ? format(selectedDate, 'yyyy-MM-dd') : ''
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
-        render={<Button variant="secondary" className="bg-white/10 text-white" />}
+        render={
+          <Button variant="secondary" className="bg-white/10 text-white" />
+        }
       >
         Add transaction
       </DialogTrigger>
@@ -105,8 +109,8 @@ export function AddTransactionDialog({
                   name="description"
                   placeholder="e.g. September transfer"
                   className={cn(
-                    "min-h-[88px] bg-white/5",
-                    state.fieldErrors?.description && "border-rose-400"
+                    'min-h-[88px] bg-white/5',
+                    state.fieldErrors?.description && 'border-rose-400',
                   )}
                   required
                 />
@@ -118,8 +122,8 @@ export function AddTransactionDialog({
               <FieldContent>
                 <InputGroup
                   className={cn(
-                    "bg-white/5",
-                    state.fieldErrors?.amount && "border-rose-400"
+                    'bg-white/5',
+                    state.fieldErrors?.amount && 'border-rose-400',
                   )}
                 >
                   <InputGroupAddon align="inline-start">
@@ -148,14 +152,14 @@ export function AddTransactionDialog({
                   name="direction"
                   defaultValue="deposit"
                   itemToStringLabel={(value) =>
-                    value === "withdrawal" ? "Withdrawal" : "Deposit"
+                    value === 'withdrawal' ? 'Withdrawal' : 'Deposit'
                   }
                 >
                   <SelectTrigger
                     id="direction"
                     className={cn(
-                      "w-full justify-between bg-white/5 text-slate-100",
-                      state.fieldErrors?.direction && "border-rose-400"
+                      'w-full justify-between bg-white/5 text-slate-100',
+                      state.fieldErrors?.direction && 'border-rose-400',
                     )}
                   >
                     <SelectValue />
@@ -171,11 +175,7 @@ export function AddTransactionDialog({
             <Field>
               <FieldLabel htmlFor="transactedOn">Date</FieldLabel>
               <FieldContent>
-                <input
-                  type="hidden"
-                  name="transactedOn"
-                  value={dateValue}
-                />
+                <input type="hidden" name="transactedOn" value={dateValue} />
                 <Popover>
                   <PopoverTrigger
                     render={
@@ -183,9 +183,9 @@ export function AddTransactionDialog({
                         type="button"
                         variant="outline"
                         className={cn(
-                          "w-full justify-between bg-white/5 text-left font-normal text-slate-100",
-                          !selectedDate && "text-slate-500",
-                          state.fieldErrors?.transactedOn && "border-rose-400"
+                          'w-full justify-between bg-white/5 text-left font-normal text-slate-100',
+                          !selectedDate && 'text-slate-500',
+                          state.fieldErrors?.transactedOn && 'border-rose-400',
                         )}
                       />
                     }
@@ -221,8 +221,10 @@ export function AddTransactionDialog({
           {state.message ? (
             <p
               className={cn(
-                "text-sm",
-                state.status === "success" ? "text-emerald-300" : "text-rose-300"
+                'text-sm',
+                state.status === 'success'
+                  ? 'text-emerald-300'
+                  : 'text-rose-300',
               )}
             >
               {state.message}
@@ -238,7 +240,7 @@ export function AddTransactionDialog({
               Cancel
             </Button>
             <Button type="submit" disabled={pending}>
-              {pending ? "Saving..." : "Save transaction"}
+              {pending ? 'Saving...' : 'Save transaction'}
             </Button>
           </DialogFooter>
         </Form>

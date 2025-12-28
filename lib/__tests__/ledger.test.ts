@@ -1,13 +1,13 @@
-import { describe, expect, it } from "vitest"
+import { describe, expect, it } from 'vitest'
 
 import {
   groupTotalsByGoal,
   splitDepositsWithdrawals,
   sumAmounts,
-} from "@/lib/ledger"
+} from '@/lib/ledger'
 
-describe("ledger utilities", () => {
-  it("sums amounts across transactions", () => {
+describe('ledger utilities', () => {
+  it('sums amounts across transactions', () => {
     const total = sumAmounts([
       { amountCents: 1200 },
       { amountCents: -500 },
@@ -17,20 +17,20 @@ describe("ledger utilities", () => {
     expect(total).toBe(1000)
   })
 
-  it("groups totals by goal", () => {
+  it('groups totals by goal', () => {
     const totals = groupTotalsByGoal([
-      { goalId: "goal-a", amountCents: 500 },
-      { goalId: "goal-b", amountCents: 300 },
-      { goalId: "goal-a", amountCents: -200 },
+      { goalId: 'goal-a', amountCents: 500 },
+      { goalId: 'goal-b', amountCents: 300 },
+      { goalId: 'goal-a', amountCents: -200 },
     ])
 
     expect(totals).toEqual({
-      "goal-a": 300,
-      "goal-b": 300,
+      'goal-a': 300,
+      'goal-b': 300,
     })
   })
 
-  it("splits deposits and withdrawals", () => {
+  it('splits deposits and withdrawals', () => {
     const totals = splitDepositsWithdrawals([
       { amountCents: 1500 },
       { amountCents: -250 },

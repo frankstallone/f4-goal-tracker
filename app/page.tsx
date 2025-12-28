@@ -1,6 +1,6 @@
-import { GoalCard } from "@/components/goal-card"
-import { getGoals } from "@/lib/data/goals"
-import { formatCurrencyFromCents } from "@/lib/format"
+import { GoalCard } from '@/components/goal-card'
+import { getGoals } from '@/lib/data/goals'
+import { formatCurrencyFromCents } from '@/lib/format'
 
 export default async function HomePage() {
   const goals = await getGoals()

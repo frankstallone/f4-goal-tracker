@@ -1,6 +1,6 @@
-"use client"
+'use client'
 
-import * as React from "react"
+import * as React from 'react'
 import {
   flexRender,
   getCoreRowModel,
@@ -8,42 +8,42 @@ import {
   type ColumnDef,
   type SortingState,
   useReactTable,
-} from "@tanstack/react-table"
-import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react"
+} from '@tanstack/react-table'
+import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react'
 
-import { formatLongDate, formatSignedCurrencyFromCents } from "@/lib/format"
-import type { GoalTransaction } from "@/lib/types"
-import { cn } from "@/lib/utils"
+import { formatLongDate, formatSignedCurrencyFromCents } from '@/lib/format'
+import type { GoalTransaction } from '@/lib/types'
+import { cn } from '@/lib/utils'
 
 const columns: ColumnDef<GoalTransaction>[] = [
   {
-    accessorKey: "description",
-    header: "Description",
+    accessorKey: 'description',
+    header: 'Description',
     cell: ({ row }) => (
       <div className="font-medium text-slate-900">
-        {row.getValue("description")}
+        {row.getValue('description')}
       </div>
     ),
   },
   {
-    accessorKey: "transactedOn",
-    header: "Date",
+    accessorKey: 'transactedOn',
+    header: 'Date',
     cell: ({ row }) => (
       <span className="text-sm text-slate-700">
-        {formatLongDate(row.getValue("transactedOn"))}
+        {formatLongDate(row.getValue('transactedOn'))}
       </span>
     ),
   },
   {
-    accessorKey: "amountCents",
-    header: "Amount",
+    accessorKey: 'amountCents',
+    header: 'Amount',
     cell: ({ row }) => {
-      const amount = row.getValue<number>("amountCents")
+      const amount = row.getValue<number>('amountCents')
       return (
         <span
           className={cn(
-            "text-sm font-semibold",
-            amount >= 0 ? "text-emerald-700" : "text-rose-700"
+            'text-sm font-semibold',
+            amount >= 0 ? 'text-emerald-700' : 'text-rose-700',
           )}
         >
           {formatSignedCurrencyFromCents(amount)}
@@ -52,11 +52,11 @@ const columns: ColumnDef<GoalTransaction>[] = [
     },
   },
   {
-    accessorKey: "createdBy",
-    header: "By",
+    accessorKey: 'createdBy',
+    header: 'By',
     cell: ({ row }) => (
       <span className="text-sm text-slate-700">
-        {row.getValue("createdBy") || "—"}
+        {row.getValue('createdBy') || '—'}
       </span>
     ),
   },
@@ -66,9 +66,11 @@ type GoalTransactionsTableProps = {
   transactions: GoalTransaction[]
 }
 
-export function GoalTransactionsTable({ transactions }: GoalTransactionsTableProps) {
+export function GoalTransactionsTable({
+  transactions,
+}: GoalTransactionsTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([
-    { id: "transactedOn", desc: true },
+    { id: 'transactedOn', desc: true },
   ])
 
   // eslint-disable-next-line react-hooks/incompatible-library
@@ -114,10 +116,10 @@ export function GoalTransactionsTable({ transactions }: GoalTransactionsTablePro
                         >
                           {flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                           {isSorted ? (
-                            isSorted === "asc" ? (
+                            isSorted === 'asc' ? (
                               <ArrowUp className="h-3 w-3" />
                             ) : (
                               <ArrowDown className="h-3 w-3" />
@@ -142,7 +144,10 @@ export function GoalTransactionsTable({ transactions }: GoalTransactionsTablePro
                 >
                   {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} className="px-4 py-3">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
                     </td>
                   ))}
                 </tr>

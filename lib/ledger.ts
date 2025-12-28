@@ -27,6 +27,6 @@ export function splitDepositsWithdrawals(records: AmountRecord[]) {
       }
       return totals
     },
-    { deposits: 0, withdrawals: 0 }
+    { deposits: 0, withdrawals: 0 },
   )
 }

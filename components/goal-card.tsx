@@ -1,6 +1,6 @@
-import Image from "next/image"
-import Link from "next/link"
-import { Badge } from "@/components/ui/badge"
+import Image from 'next/image'
+import Link from 'next/link'
+import { Badge } from '@/components/ui/badge'
 import {
   Card,
   CardContent,
@@ -8,17 +8,17 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { formatCurrencyFromCents } from "@/lib/format"
-import type { GoalSummary } from "@/lib/types"
-import { cn } from "@/lib/utils"
+} from '@/components/ui/card'
+import { formatCurrencyFromCents } from '@/lib/format'
+import type { GoalSummary } from '@/lib/types'
+import { cn } from '@/lib/utils'
 
 const FALLBACK_GRADIENTS = [
-  "from-emerald-500/30 via-emerald-500/10 to-transparent",
-  "from-sky-500/30 via-sky-500/10 to-transparent",
-  "from-amber-500/30 via-amber-500/10 to-transparent",
-  "from-rose-500/30 via-rose-500/10 to-transparent",
-  "from-indigo-500/30 via-indigo-500/10 to-transparent",
+  'from-emerald-500/30 via-emerald-500/10 to-transparent',
+  'from-sky-500/30 via-sky-500/10 to-transparent',
+  'from-amber-500/30 via-amber-500/10 to-transparent',
+  'from-rose-500/30 via-rose-500/10 to-transparent',
+  'from-indigo-500/30 via-indigo-500/10 to-transparent',
 ]
 
 type GoalCardProps = {
@@ -36,12 +36,7 @@ export function GoalCard({ goal, index }: GoalCardProps) {
     >
       <Card className="relative h-full overflow-hidden border-white/10 bg-slate-900/60 text-slate-100 shadow-[0_20px_60px_-40px_rgba(0,0,0,0.8)]">
         <div className="absolute inset-0">
-          <div
-            className={cn(
-              "absolute inset-0 bg-gradient-to-br",
-              gradient
-            )}
-          />
+          <div className={cn('absolute inset-0 bg-gradient-to-br', gradient)} />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),transparent_55%)]" />
         </div>
         <div className="relative">
@@ -93,10 +88,7 @@ export function GoalCard({ goal, index }: GoalCardProps) {
                 </Badge>
               ))
             ) : (
-              <Badge
-                variant="secondary"
-                className="bg-white/10 text-white"
-              >
+              <Badge variant="secondary" className="bg-white/10 text-white">
                 Shared Goal
               </Badge>
             )}
