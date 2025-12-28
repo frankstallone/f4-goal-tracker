@@ -1,22 +1,23 @@
 import { betterAuth } from 'better-auth'
 import { Pool } from 'pg'
 
+import { getServerEnv, requireEnv } from '@/lib/env'
+
+const env = getServerEnv()
 const baseURL =
-  process.env.BETTER_AUTH_URL ??
-  (process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : 'http://localhost:3000')
+  env.BETTER_AUTH_URL ??
+  (env.VERCEL_URL ? `https://${env.VERCEL_URL}` : 'http://localhost:3000')
 
 export const auth = betterAuth({
   baseURL,
-  secret: process.env.BETTER_AUTH_SECRET,
+  secret: requireEnv('BETTER_AUTH_SECRET'),
   database: new Pool({
-    connectionString: process.env.DATABASE_URL,
+    connectionString: requireEnv('DATABASE_URL'),
   }),
   socialProviders: {
     google: {
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      clientId: requireEnv('GOOGLE_CLIENT_ID'),
+      clientSecret: requireEnv('GOOGLE_CLIENT_SECRET'),
     },
   },
 })

@@ -1,3 +1,5 @@
+import { getServerEnv } from '@/lib/env'
+
 function normalizeEmails(value: string) {
   return value
     .split(',')
@@ -6,7 +8,7 @@ function normalizeEmails(value: string) {
 }
 
 export function getAllowedEmails() {
-  const raw = process.env.ALLOWED_EMAILS ?? ''
+  const raw = getServerEnv().ALLOWED_EMAILS ?? ''
   if (!raw.trim()) return []
   return normalizeEmails(raw)
 }

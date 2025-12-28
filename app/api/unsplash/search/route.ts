@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server'
 
+import { requireEnv } from '@/lib/env'
+import { getClientIp, rateLimit } from '@/lib/rate-limit'
+
 const UNSPLASH_BASE_URL = 'https://api.unsplash.com'
 
 export async function GET(request: Request) {
@@ -10,11 +13,30 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Missing query.' }, { status: 400 })
   }
 
-  const accessKey = process.env.UNSPLASH_ACCESS_KEY
-  if (!accessKey) {
+  let accessKey: string
+  try {
+    accessKey = requireEnv('UNSPLASH_ACCESS_KEY')
+  } catch (error) {
     return NextResponse.json(
-      { error: 'UNSPLASH_ACCESS_KEY is not configured.' },
+      { error: (error as Error).message },
       { status: 500 },
+    )
+  }
+  const ip = getClientIp(request)
+  const { allowed, resetAt } = rateLimit(`unsplash-search:${ip}`, {
+    windowMs: 15_000,
+    max: 12,
+  })
+  if (!allowed) {
+    const retryAfter = Math.max(1, Math.ceil((resetAt - Date.now()) / 1000))
+    return NextResponse.json(
+      { error: 'Too many search requests. Try again soon.' },
+      {
+        status: 429,
+        headers: {
+          'Retry-After': retryAfter.toString(),
+        },
+      },
     )
   }
 
@@ -26,7 +48,7 @@ export async function GET(request: Request) {
       headers: {
         Authorization: `Client-ID ${accessKey}`,
       },
-      cache: 'no-store',
+      next: { revalidate: 60 },
     },
   )
 
@@ -63,5 +85,12 @@ export async function GET(request: Request) {
     },
   }))
 
-  return NextResponse.json({ results })
+  return NextResponse.json(
+    { results },
+    {
+      headers: {
+        'Cache-Control': 'public, max-age=60',
+      },
+    },
+  )
 }

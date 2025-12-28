@@ -21,7 +21,7 @@ Open `http://localhost:3000`.
 
 ## Environment Variables
 
-Create `.env.local` with:
+Copy `.env.example` to `.env.local` and fill in:
 
 ```bash
 DATABASE_URL=postgres://...
@@ -34,13 +34,28 @@ GOOGLE_CLIENT_SECRET=your_google_client_secret
 ALLOWED_EMAILS=you@example.com,partner@example.com
 ```
 
-Apply `db/schema.sql` to initialize the database.
+## Database Setup
+
+1. Ensure the Better Auth tables are created in your database (run Better Auth's schema setup).
+2. Apply app migrations:
+
+```bash
+npm run db:migrate
+```
+
+Optional seed data:
+
+```bash
+npm run db:seed
+```
 
 ## Scripts
 
 - `npm run dev` – start the dev server.
 - `npm run build` – production build.
 - `npm run start` – run the build locally.
+- `npm run db:migrate` – apply SQL migrations from `db/migrations`.
+- `npm run db:seed` – load anonymized sample goals.
 - `npm run lint` – ESLint.
 - `npm run test` – Vitest.
 - `npm run format` – Prettier.

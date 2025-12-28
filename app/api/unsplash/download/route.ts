@@ -1,13 +1,35 @@
 import { NextResponse } from 'next/server'
 
+import { requireEnv } from '@/lib/env'
+import { getClientIp, rateLimit } from '@/lib/rate-limit'
+
 const UNSPLASH_BASE_URL = 'https://api.unsplash.com'
 
 export async function POST(request: Request) {
-  const accessKey = process.env.UNSPLASH_ACCESS_KEY
-  if (!accessKey) {
+  let accessKey: string
+  try {
+    accessKey = requireEnv('UNSPLASH_ACCESS_KEY')
+  } catch (error) {
     return NextResponse.json(
-      { error: 'UNSPLASH_ACCESS_KEY is not configured.' },
+      { error: (error as Error).message },
       { status: 500 },
+    )
+  }
+  const ip = getClientIp(request)
+  const { allowed, resetAt } = rateLimit(`unsplash-download:${ip}`, {
+    windowMs: 60_000,
+    max: 30,
+  })
+  if (!allowed) {
+    const retryAfter = Math.max(1, Math.ceil((resetAt - Date.now()) / 1000))
+    return NextResponse.json(
+      { error: 'Too many download requests. Try again soon.' },
+      {
+        status: 429,
+        headers: {
+          'Retry-After': retryAfter.toString(),
+        },
+      },
     )
   }
 
