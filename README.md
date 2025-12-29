@@ -63,3 +63,7 @@ npm run db:seed
 ## Deployment
 
 Deploy on Vercel. Ensure `DATABASE_URL` and `UNSPLASH_ACCESS_KEY` are set for dev/preview/prod environments.
+
+## License
+
+This project is licensed under the O'Saasy License. See `LICENSE`.
