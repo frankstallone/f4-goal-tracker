@@ -38,6 +38,7 @@ export function DeleteGoalDialog({
 }: DeleteGoalDialogProps) {
   const [open, setOpen] = React.useState(false)
   const router = useRouter()
+  const hasCustomTrigger = Boolean(trigger)
   const [state, formAction, pending] = React.useActionState(
     deleteGoalAction.bind(null, goalSlug),
     initialState,
@@ -55,7 +56,10 @@ export function DeleteGoalDialog({
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger render={trigger ?? <Button variant="destructive" />}>
+      <AlertDialogTrigger
+        render={trigger ?? <Button variant="destructive" />}
+        nativeButton={hasCustomTrigger ? false : undefined}
+      >
         Delete goal
       </AlertDialogTrigger>
       <AlertDialogContent className="border-white/10 bg-slate-950 text-slate-100">
