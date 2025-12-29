@@ -6,7 +6,14 @@ import { GoalTransactionsTable } from '@/components/goal-transactions-table'
 import { RedirectToast } from '@/components/redirect-toast'
 import { UserMenu } from '@/components/user-menu'
 import { Badge } from '@/components/ui/badge'
-import { buttonVariants } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { requireServerSession } from '@/lib/auth-session'
 import { getGoalBySlug, getGoalTransactions } from '@/lib/data/goals'
 import {
@@ -16,6 +23,7 @@ import {
 import { splitDepositsWithdrawals, sumAmounts } from '@/lib/ledger'
 import { getUserLabel } from '@/lib/user-label'
 import { cn } from '@/lib/utils'
+import { MoreVertical } from 'lucide-react'
 
 interface GoalDetailPageProps {
   params: Promise<{ goalSlug: string }>
@@ -54,22 +62,51 @@ export default async function GoalDetailPage({ params }: GoalDetailPageProps) {
               ← Back to goals
             </Link>
             <div className="flex flex-wrap items-center gap-3">
-              <DeleteGoalDialog goalSlug={goal.slug} goalName={goal.name} />
-              <Link
-                href={`/goals/${goal.slug}/edit`}
-                className={cn(
-                  buttonVariants({ variant: 'outline' }),
-                  'border-white/10 bg-white/5 text-slate-100 hover:bg-white/10',
-                )}
-              >
-                Edit goal
-              </Link>
-              <Link
-                href={`/goals/${goal.slug}/transactions/new`}
-                className={cn(buttonVariants())}
-              >
-                Add transaction
-              </Link>
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  render={
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="border-white/10 bg-white/5 text-slate-100 hover:bg-white/10"
+                      aria-label="Open goal actions"
+                    />
+                  }
+                >
+                  <MoreVertical />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  className="border-white/10 bg-slate-950 text-slate-100"
+                >
+                  <DropdownMenuItem
+                    render={
+                      <Link
+                        href={`/goals/${goal.slug}/transactions/new`}
+                        className="w-full"
+                      />
+                    }
+                  >
+                    Add transaction
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    render={
+                      <Link
+                        href={`/goals/${goal.slug}/edit`}
+                        className="w-full"
+                      />
+                    }
+                  >
+                    Edit goal
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="bg-white/10" />
+                  <DeleteGoalDialog
+                    goalSlug={goal.slug}
+                    goalName={goal.name}
+                    trigger={<DropdownMenuItem variant="destructive" />}
+                  />
+                </DropdownMenuContent>
+              </DropdownMenu>
               <UserMenu user={session.user} />
             </div>
           </div>

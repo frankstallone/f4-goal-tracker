@@ -28,11 +28,13 @@ const initialState: DeleteGoalState = { status: 'idle' }
 type DeleteGoalDialogProps = {
   goalSlug: string
   goalName: string
+  trigger?: React.ReactElement
 }
 
 export function DeleteGoalDialog({
   goalSlug,
   goalName,
+  trigger,
 }: DeleteGoalDialogProps) {
   const [open, setOpen] = React.useState(false)
   const router = useRouter()
@@ -53,9 +55,7 @@ export function DeleteGoalDialog({
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger
-        render={<Button variant="destructive">Delete goal</Button>}
-      >
+      <AlertDialogTrigger render={trigger ?? <Button variant="destructive" />}>
         Delete goal
       </AlertDialogTrigger>
       <AlertDialogContent className="border-white/10 bg-slate-950 text-slate-100">
