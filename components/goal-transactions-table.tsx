@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import { useRouter } from 'next/navigation'
 import {
   flexRender,
   getCoreRowModel,
@@ -63,15 +64,18 @@ const columns: ColumnDef<GoalTransaction>[] = [
 ]
 
 type GoalTransactionsTableProps = {
+  goalSlug: string
   transactions: GoalTransaction[]
 }
 
 export function GoalTransactionsTable({
+  goalSlug,
   transactions,
 }: GoalTransactionsTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: 'transactedOn', desc: true },
   ])
+  const router = useRouter()
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
@@ -140,7 +144,22 @@ export function GoalTransactionsTable({
               table.getRowModel().rows.map((row) => (
                 <tr
                   key={row.id}
-                  className="border-b border-white/10 last:border-b-0"
+                  className="cursor-pointer border-b border-white/10 transition hover:bg-white/5 focus-visible:bg-white/5 last:border-b-0"
+                  tabIndex={0}
+                  role="link"
+                  onClick={() =>
+                    router.push(
+                      `/goals/${goalSlug}/transactions/${row.original.id}`,
+                    )
+                  }
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault()
+                      router.push(
+                        `/goals/${goalSlug}/transactions/${row.original.id}`,
+                      )
+                    }
+                  }}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} className="px-4 py-3">

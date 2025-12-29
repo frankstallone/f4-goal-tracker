@@ -1,10 +1,10 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-import { AddTransactionDialog } from '@/components/add-transaction-dialog'
 import { SignOutButton } from '@/components/auth-buttons'
 import { DeleteGoalDialog } from '@/components/delete-goal-dialog'
 import { GoalTransactionsTable } from '@/components/goal-transactions-table'
+import { RedirectToast } from '@/components/redirect-toast'
 import { Badge } from '@/components/ui/badge'
 import { buttonVariants } from '@/components/ui/button'
 import { requireServerSession } from '@/lib/auth-session'
@@ -38,6 +38,7 @@ export default async function GoalDetailPage({ params }: GoalDetailPageProps) {
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100">
+      <RedirectToast />
       <div className="relative overflow-hidden">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(148,163,184,0.18),transparent_55%)]" />
         <div className="pointer-events-none absolute -top-32 left-0 h-72 w-72 rounded-full bg-amber-400/10 blur-3xl" />
@@ -54,7 +55,12 @@ export default async function GoalDetailPage({ params }: GoalDetailPageProps) {
             </Link>
             <div className="flex flex-wrap items-center gap-3">
               <DeleteGoalDialog goalSlug={goal.slug} goalName={goal.name} />
-              <AddTransactionDialog goalSlug={goal.slug} goalName={goal.name} />
+              <Link
+                href={`/goals/${goal.slug}/transactions/new`}
+                className={cn(buttonVariants())}
+              >
+                Add transaction
+              </Link>
               <SignOutButton className="border-white/10 bg-white/5 text-slate-100 hover:bg-white/10" />
             </div>
           </div>
@@ -142,7 +148,10 @@ export default async function GoalDetailPage({ params }: GoalDetailPageProps) {
           </section>
 
           <div className="mt-10">
-            <GoalTransactionsTable transactions={transactions} />
+            <GoalTransactionsTable
+              goalSlug={goal.slug}
+              transactions={transactions}
+            />
           </div>
         </div>
       </div>

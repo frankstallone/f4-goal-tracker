@@ -6,6 +6,9 @@ import { toast } from 'sonner'
 
 const TOAST_MESSAGES: Record<string, string> = {
   'goal-deleted': 'Goal deleted.',
+  'transaction-added': 'Transaction added.',
+  'transaction-updated': 'Transaction updated.',
+  'transaction-deleted': 'Transaction deleted.',
 }
 
 export function RedirectToast() {
