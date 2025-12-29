@@ -25,7 +25,7 @@ export default async function NewGoalPage() {
                 'border-white/10 bg-white/5 text-slate-100 hover:bg-white/10',
               )}
             >
-              ← Back to goals
+              Back to goals
             </Link>
             <UserMenu user={session.user} />
           </div>
