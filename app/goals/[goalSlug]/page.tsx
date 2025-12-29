@@ -59,9 +59,15 @@ export default async function GoalDetailPage({ params }: GoalDetailPageProps) {
                 'border-white/10 bg-white/5 text-slate-100 hover:bg-white/10',
               )}
             >
-              ← Back to goals
+              Back to goals
             </Link>
             <div className="flex flex-wrap items-center gap-3">
+              <Link
+                href={`/goals/${goal.slug}/transactions/new`}
+                className={cn(buttonVariants())}
+              >
+                Add transaction
+              </Link>
               <DropdownMenu>
                 <DropdownMenuTrigger
                   render={
@@ -79,16 +85,6 @@ export default async function GoalDetailPage({ params }: GoalDetailPageProps) {
                   align="end"
                   className="border-white/10 bg-slate-950 text-slate-100"
                 >
-                  <DropdownMenuItem
-                    render={
-                      <Link
-                        href={`/goals/${goal.slug}/transactions/new`}
-                        className="w-full"
-                      />
-                    }
-                  >
-                    Add transaction
-                  </DropdownMenuItem>
                   <DropdownMenuItem
                     render={
                       <Link
