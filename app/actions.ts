@@ -57,6 +57,7 @@ export async function addGoalAction(
     .selectFrom('goals')
     .select(['slug'])
     .where('slug', 'like', `${baseSlug}%`)
+    .where('is_archived', '=', false)
     .execute()
 
   let slug = baseSlug

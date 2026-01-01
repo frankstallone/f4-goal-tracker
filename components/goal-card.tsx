@@ -25,16 +25,15 @@ const FALLBACK_GRADIENTS = [
 type GoalCardProps = {
   goal: GoalSummary
   index: number
+  href?: string
 }
 
-export function GoalCard({ goal, index }: GoalCardProps) {
+export function GoalCard({ goal, index, href }: GoalCardProps) {
   const gradient = FALLBACK_GRADIENTS[index % FALLBACK_GRADIENTS.length]
+  const linkHref = href ?? `/goals/${goal.slug}`
 
   return (
-    <Link
-      href={`/goals/${goal.slug}`}
-      className="group block h-full transition"
-    >
+    <Link href={linkHref} className="group block h-full transition">
       <Card className="relative h-full overflow-hidden border-white/10 bg-slate-900/60 text-slate-100 shadow-[0_20px_60px_-40px_rgba(0,0,0,0.8)]">
         <div className="absolute inset-0">
           {goal.coverImageUrl ? (
@@ -88,6 +87,14 @@ export function GoalCard({ goal, index }: GoalCardProps) {
                 Shared Goal
               </Badge>
             )}
+            {goal.isArchived ? (
+              <Badge
+                variant="secondary"
+                className="bg-amber-500/20 text-amber-100"
+              >
+                Archived
+              </Badge>
+            ) : null}
             {goal.coverImageAttributionName ? (
               <span className="text-xs text-slate-400">
                 Photo by {goal.coverImageAttributionName}

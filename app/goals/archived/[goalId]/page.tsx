@@ -1,10 +1,7 @@
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 
-import {
-  ArchiveGoalDialog,
-  UnarchiveGoalDialog,
-} from '@/components/archive-goal-dialog'
+import { UnarchiveGoalDialog } from '@/components/archive-goal-dialog'
 import { DeleteGoalDialog } from '@/components/delete-goal-dialog'
 import { GoalTransactionsTable } from '@/components/goal-transactions-table'
 import { RedirectToast } from '@/components/redirect-toast'
@@ -19,9 +16,10 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { requireServerSession } from '@/lib/auth-session'
-import { getGoalBySlug, getGoalTransactions } from '@/lib/data/goals'
+import { getArchivedGoalById, getGoalTransactions } from '@/lib/data/goals'
 import {
   formatCurrencyFromCents,
+  formatLongDate,
   formatSignedCurrencyFromCents,
 } from '@/lib/format'
 import { splitDepositsWithdrawals, sumAmounts } from '@/lib/ledger'
@@ -29,16 +27,21 @@ import { getUserLabel } from '@/lib/user-label'
 import { cn } from '@/lib/utils'
 import { MoreVertical } from 'lucide-react'
 
-interface GoalDetailPageProps {
-  params: Promise<{ goalSlug: string }>
+interface ArchivedGoalDetailPageProps {
+  params: Promise<{ goalId: string }>
 }
 
-export default async function GoalDetailPage({ params }: GoalDetailPageProps) {
-  const { goalSlug } = await params
+export default async function ArchivedGoalDetailPage({
+  params,
+}: ArchivedGoalDetailPageProps) {
+  const { goalId } = await params
   const session = await requireServerSession()
-  const goal = await getGoalBySlug(goalSlug)
+  const goal = await getArchivedGoalById(goalId)
   if (!goal) {
     notFound()
+  }
+  if (!goal.isArchived) {
+    redirect(`/goals/${goal.slug}`)
   }
 
   const transactions = await getGoalTransactions(goal.id)
@@ -47,7 +50,6 @@ export default async function GoalDetailPage({ params }: GoalDetailPageProps) {
     ? balanceFromTransactions
     : goal.balanceCents
   const { deposits, withdrawals } = splitDepositsWithdrawals(transactions)
-  const isArchived = goal.isArchived
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100">
@@ -58,23 +60,15 @@ export default async function GoalDetailPage({ params }: GoalDetailPageProps) {
         <div className="relative mx-auto w-full max-w-5xl px-6 py-12">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <Link
-              href="/"
+              href="/goals/archived"
               className={cn(
                 buttonVariants({ variant: 'outline' }),
                 'border-white/10 bg-white/5 text-slate-100 hover:bg-white/10',
               )}
             >
-              Back to goals
+              Back to archived
             </Link>
             <div className="flex flex-wrap items-center gap-3">
-              {isArchived ? null : (
-                <Link
-                  href={`/goals/${goal.slug}/transactions/new`}
-                  className={cn(buttonVariants())}
-                >
-                  Add transaction
-                </Link>
-              )}
               <DropdownMenu>
                 <DropdownMenuTrigger
                   render={
@@ -92,36 +86,17 @@ export default async function GoalDetailPage({ params }: GoalDetailPageProps) {
                   align="end"
                   className="border-white/10 bg-slate-950 text-slate-100"
                 >
-                  {isArchived ? (
-                    <UnarchiveGoalDialog
-                      goalId={goal.id}
-                      goalSlug={goal.slug}
-                      goalName={goal.name}
-                      trigger={<DropdownMenuItem />}
-                    />
-                  ) : (
-                    <>
-                      <DropdownMenuItem
-                        render={
-                          <Link
-                            href={`/goals/${goal.slug}/edit`}
-                            className="w-full"
-                          />
-                        }
-                      >
-                        Edit goal
-                      </DropdownMenuItem>
-                      <ArchiveGoalDialog
-                        goalSlug={goal.slug}
-                        goalName={goal.name}
-                        trigger={<DropdownMenuItem />}
-                      />
-                    </>
-                  )}
+                  <UnarchiveGoalDialog
+                    goalId={goal.id}
+                    goalSlug={goal.slug}
+                    goalName={goal.name}
+                    trigger={<DropdownMenuItem />}
+                  />
                   <DropdownMenuSeparator className="bg-white/10" />
                   <DeleteGoalDialog
                     goalId={goal.id}
                     goalName={goal.name}
+                    successRedirect="/goals/archived?toast=goal-deleted"
                     trigger={<DropdownMenuItem variant="destructive" />}
                   />
                 </DropdownMenuContent>
@@ -134,7 +109,7 @@ export default async function GoalDetailPage({ params }: GoalDetailPageProps) {
             <div className="space-y-6">
               <div>
                 <p className="text-xs uppercase tracking-widest text-slate-400">
-                  Goal
+                  Archived goal
                 </p>
                 <h1 className="text-4xl font-semibold tracking-tight">
                   {goal.name}
@@ -165,21 +140,19 @@ export default async function GoalDetailPage({ params }: GoalDetailPageProps) {
                 <Badge variant="secondary" className="bg-white/10 text-white">
                   {transactions.length} transactions
                 </Badge>
-                {isArchived ? (
-                  <Badge
-                    variant="secondary"
-                    className="bg-amber-500/20 text-amber-100"
-                  >
-                    Archived
-                  </Badge>
-                ) : null}
+                <Badge
+                  variant="secondary"
+                  className="bg-amber-500/20 text-amber-100"
+                >
+                  Archived
+                </Badge>
               </div>
 
-              {isArchived ? (
-                <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
-                  This goal is archived and read-only.
-                </div>
-              ) : null}
+              <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
+                {goal.archivedAt
+                  ? `Archived on ${formatLongDate(goal.archivedAt)}.`
+                  : 'This goal is archived and read-only.'}
+              </div>
 
               <div className="rounded-3xl border border-white/10 bg-white/5 p-6 w-fit">
                 <p className="text-xs uppercase tracking-widest text-slate-400">
@@ -231,7 +204,7 @@ export default async function GoalDetailPage({ params }: GoalDetailPageProps) {
             <GoalTransactionsTable
               goalSlug={goal.slug}
               transactions={transactions}
-              readOnly={isArchived}
+              readOnly
             />
           </div>
         </div>

@@ -18,6 +18,11 @@ export type Goal = {
   coverImageId: string | null
   champions: Champion[]
   targetAmountCents: number | null
+  isArchived: boolean
+  archivedAt: string | null
+  archivedBy: string | null
+  unarchivedAt: string | null
+  unarchivedBy: string | null
 }
 
 export type GoalSummary = Goal & {

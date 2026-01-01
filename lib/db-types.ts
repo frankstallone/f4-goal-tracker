@@ -18,6 +18,11 @@ type GoalsTable = {
   cover_image_attribution_url: string | null
   cover_image_id: string | null
   target_amount_cents: number | null
+  is_archived: Generated<boolean>
+  archived_at: Date | null
+  archived_by: string | null
+  unarchived_at: Date | null
+  unarchived_by: string | null
   created_at: Generated<Date>
   updated_at: Generated<Date>
 }

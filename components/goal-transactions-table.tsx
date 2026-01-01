@@ -56,11 +56,13 @@ const columns: ColumnDef<GoalTransaction>[] = [
 type GoalTransactionsTableProps = {
   goalSlug: string
   transactions: GoalTransaction[]
+  readOnly?: boolean
 }
 
 export function GoalTransactionsTable({
   goalSlug,
   transactions,
+  readOnly = false,
 }: GoalTransactionsTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: 'transactedOn', desc: true },
@@ -134,22 +136,33 @@ export function GoalTransactionsTable({
               table.getRowModel().rows.map((row) => (
                 <tr
                   key={row.id}
-                  className="cursor-pointer border-b border-white/10 transition hover:bg-white/5 focus-visible:bg-white/5 last:border-b-0"
-                  tabIndex={0}
-                  role="link"
-                  onClick={() =>
-                    router.push(
-                      `/goals/${goalSlug}/transactions/${row.original.id}`,
-                    )
+                  className={`border-b border-white/10 transition last:border-b-0 ${
+                    readOnly
+                      ? ''
+                      : 'cursor-pointer hover:bg-white/5 focus-visible:bg-white/5'
+                  }`}
+                  tabIndex={readOnly ? undefined : 0}
+                  role={readOnly ? undefined : 'link'}
+                  onClick={
+                    readOnly
+                      ? undefined
+                      : () =>
+                          router.push(
+                            `/goals/${goalSlug}/transactions/${row.original.id}`,
+                          )
                   }
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter' || event.key === ' ') {
-                      event.preventDefault()
-                      router.push(
-                        `/goals/${goalSlug}/transactions/${row.original.id}`,
-                      )
-                    }
-                  }}
+                  onKeyDown={
+                    readOnly
+                      ? undefined
+                      : (event) => {
+                          if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault()
+                            router.push(
+                              `/goals/${goalSlug}/transactions/${row.original.id}`,
+                            )
+                          }
+                        }
+                  }
                 >
                   {row.getVisibleCells().map((cell) => (
                     <td
@@ -172,7 +185,9 @@ export function GoalTransactionsTable({
                   colSpan={columns.length}
                   className="px-4 py-6 text-center text-sm text-slate-400"
                 >
-                  No transactions yet. Add your first entry to start tracking.
+                  {readOnly
+                    ? 'No transactions yet.'
+                    : 'No transactions yet. Add your first entry to start tracking.'}
                 </td>
               </tr>
             )}

@@ -26,28 +26,30 @@ import { toast } from 'sonner'
 const initialState: DeleteGoalState = { status: 'idle' }
 
 type DeleteGoalDialogProps = {
-  goalSlug: string
+  goalId: string
   goalName: string
   trigger?: React.ReactElement
+  successRedirect?: string
 }
 
 export function DeleteGoalDialog({
-  goalSlug,
+  goalId,
   goalName,
   trigger,
+  successRedirect,
 }: DeleteGoalDialogProps) {
   const [open, setOpen] = React.useState(false)
   const router = useRouter()
   const hasCustomTrigger = Boolean(trigger)
   const [state, formAction, pending] = React.useActionState(
-    deleteGoalAction.bind(null, goalSlug),
+    deleteGoalAction.bind(null, goalId),
     initialState,
   )
 
   React.useEffect(() => {
     if (state.status === 'success') {
       setOpen(false)
-      router.push('/?toast=goal-deleted')
+      router.push(successRedirect ?? '/?toast=goal-deleted')
     }
     if (state.status === 'error' && state.message) {
       toast.error(state.message)

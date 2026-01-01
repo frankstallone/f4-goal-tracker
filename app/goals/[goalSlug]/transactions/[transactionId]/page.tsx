@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 
 import { updateTransactionAction } from '@/app/goals/[goalSlug]/transactions/actions'
 import { DeleteTransactionDialog } from '@/components/delete-transaction-dialog'
@@ -24,6 +24,9 @@ export default async function EditTransactionPage({
   const goal = await getGoalBySlug(goalSlug)
   if (!goal) {
     notFound()
+  }
+  if (goal.isArchived) {
+    redirect(`/goals/${goal.slug}`)
   }
   const userOptions = await getAllowedUsers()
 

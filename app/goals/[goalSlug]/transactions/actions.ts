@@ -62,11 +62,18 @@ export async function addTransactionAction(
 
   const goal = await db
     .selectFrom('goals')
-    .select(['id'])
+    .select(['id', 'is_archived'])
     .where('slug', '=', goalSlug)
+    .orderBy('is_archived', 'asc')
     .executeTakeFirst()
   if (!goal) {
     return { status: 'error', message: 'Goal not found.' }
+  }
+  if (goal.is_archived) {
+    return {
+      status: 'error',
+      message: 'Archived goals are read-only. Unarchive to add transactions.',
+    }
   }
 
   await db
@@ -136,13 +143,19 @@ export async function updateTransactionAction(
   const transaction = await db
     .selectFrom('goal_transactions as t')
     .innerJoin('goals as g', 'g.id', 't.goal_id')
-    .select(['t.id'])
+    .select(['t.id', 'g.is_archived'])
     .where('g.slug', '=', goalSlug)
     .where('t.id', '=', transactionId)
     .executeTakeFirst()
 
   if (!transaction) {
     return { status: 'error', message: 'Transaction not found.' }
+  }
+  if (transaction.is_archived) {
+    return {
+      status: 'error',
+      message: 'Archived goals are read-only. Unarchive to edit transactions.',
+    }
   }
 
   await db
@@ -187,13 +200,20 @@ export async function deleteTransactionAction(
   const transaction = await db
     .selectFrom('goal_transactions as t')
     .innerJoin('goals as g', 'g.id', 't.goal_id')
-    .select(['t.id'])
+    .select(['t.id', 'g.is_archived'])
     .where('g.slug', '=', goalSlug)
     .where('t.id', '=', transactionId)
     .executeTakeFirst()
 
   if (!transaction) {
     return { status: 'error', message: 'Transaction not found.' }
+  }
+  if (transaction.is_archived) {
+    return {
+      status: 'error',
+      message:
+        'Archived goals are read-only. Unarchive to delete transactions.',
+    }
   }
 
   await db

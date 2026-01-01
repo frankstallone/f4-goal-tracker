@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 
 import { addTransactionAction } from '@/app/goals/[goalSlug]/transactions/actions'
 import { TransactionForm } from '@/components/transaction-form'
@@ -22,6 +22,9 @@ export default async function NewTransactionPage({
   const goal = await getGoalBySlug(goalSlug)
   if (!goal) {
     notFound()
+  }
+  if (goal.isArchived) {
+    redirect(`/goals/${goal.slug}`)
   }
   const userOptions = await getAllowedUsers()
 

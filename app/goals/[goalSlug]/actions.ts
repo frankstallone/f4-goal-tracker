@@ -11,6 +11,16 @@ export type DeleteGoalState = {
   message?: string
 }
 
+export type ArchiveGoalState = {
+  status: 'idle' | 'success' | 'error'
+  message?: string
+}
+
+export type UnarchiveGoalState = {
+  status: 'idle' | 'success' | 'error'
+  message?: string
+}
+
 export type UpdateGoalState = {
   status: 'idle' | 'success' | 'error'
   message?: string
@@ -18,7 +28,7 @@ export type UpdateGoalState = {
 }
 
 export async function deleteGoalAction(
-  goalSlug: string,
+  goalId: string,
   prevState: DeleteGoalState,
   formData: FormData,
 ): Promise<DeleteGoalState> {
@@ -40,8 +50,8 @@ export async function deleteGoalAction(
 
   const goal = await db
     .selectFrom('goals')
-    .select(['id'])
-    .where('slug', '=', goalSlug)
+    .select(['id', 'slug'])
+    .where('id', '=', goalId)
     .executeTakeFirst()
   if (!goal) {
     return { status: 'error', message: 'Goal not found.' }
@@ -50,7 +60,127 @@ export async function deleteGoalAction(
   await db.deleteFrom('goals').where('id', '=', goal.id).execute()
 
   revalidatePath('/')
+  revalidatePath('/goals/archived')
+  revalidatePath(`/goals/${goal.slug}`)
   return { status: 'success', message: 'Goal deleted.' }
+}
+
+export async function archiveGoalAction(
+  goalSlug: string,
+  prevState: ArchiveGoalState,
+  formData: FormData,
+): Promise<ArchiveGoalState> {
+  void prevState
+  void formData
+
+  const session = await getAuthorizedSession()
+  if (!session) {
+    return { status: 'error', message: 'Sign in required.' }
+  }
+
+  const db = getDb()
+  if (!db) {
+    return {
+      status: 'error',
+      message: 'DATABASE_URL is not configured yet.',
+    }
+  }
+
+  const goal = await db
+    .selectFrom('goals')
+    .select(['id', 'is_archived'])
+    .where('slug', '=', goalSlug)
+    .where('is_archived', '=', false)
+    .executeTakeFirst()
+
+  if (!goal) {
+    return { status: 'error', message: 'Goal not found.' }
+  }
+
+  await db
+    .updateTable('goals')
+    .set({
+      is_archived: true,
+      archived_at: sql`now()`,
+      archived_by: session.user?.id ?? null,
+      updated_at: sql`now()`,
+    })
+    .where('id', '=', goal.id)
+    .execute()
+
+  revalidatePath('/')
+  revalidatePath('/goals/archived')
+  revalidatePath(`/goals/${goalSlug}`)
+
+  return { status: 'success', message: 'Goal archived.' }
+}
+
+export async function unarchiveGoalAction(
+  goalId: string,
+  prevState: UnarchiveGoalState,
+  formData: FormData,
+): Promise<UnarchiveGoalState> {
+  void prevState
+  void formData
+
+  const session = await getAuthorizedSession()
+  if (!session) {
+    return { status: 'error', message: 'Sign in required.' }
+  }
+
+  const db = getDb()
+  if (!db) {
+    return {
+      status: 'error',
+      message: 'DATABASE_URL is not configured yet.',
+    }
+  }
+
+  const goal = await db
+    .selectFrom('goals')
+    .select(['id', 'slug', 'is_archived'])
+    .where('id', '=', goalId)
+    .executeTakeFirst()
+
+  if (!goal) {
+    return { status: 'error', message: 'Goal not found.' }
+  }
+
+  if (!goal.is_archived) {
+    return { status: 'error', message: 'Goal is already active.' }
+  }
+
+  const conflictingGoal = await db
+    .selectFrom('goals')
+    .select(['id'])
+    .where('slug', '=', goal.slug)
+    .where('is_archived', '=', false)
+    .executeTakeFirst()
+
+  if (conflictingGoal) {
+    return {
+      status: 'error',
+      message:
+        'An active goal already uses this slug. Archive or delete the active goal before restoring this one.',
+    }
+  }
+
+  await db
+    .updateTable('goals')
+    .set({
+      is_archived: false,
+      unarchived_at: sql`now()`,
+      unarchived_by: session.user?.id ?? null,
+      updated_at: sql`now()`,
+    })
+    .where('id', '=', goal.id)
+    .execute()
+
+  revalidatePath('/')
+  revalidatePath('/goals/archived')
+  revalidatePath(`/goals/${goal.slug}`)
+
+  return { status: 'success', message: 'Goal restored.' }
 }
 
 export async function updateGoalAction(
@@ -99,8 +229,9 @@ export async function updateGoalAction(
 
   const goal = await db
     .selectFrom('goals')
-    .select(['id'])
+    .select(['id', 'is_archived'])
     .where('slug', '=', goalSlug)
+    .where('is_archived', '=', false)
     .executeTakeFirst()
   if (!goal) {
     return { status: 'error', message: 'Goal not found.' }

@@ -2,12 +2,19 @@ import { GoalCard } from '@/components/goal-card'
 import { GoalEmptyState } from '@/components/goal-empty-state'
 import { RedirectToast } from '@/components/redirect-toast'
 import { UserMenu } from '@/components/user-menu'
+import { Button, buttonVariants } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { getGoals } from '@/lib/data/goals'
 import { formatCurrencyFromCents } from '@/lib/format'
 import { requireServerSession } from '@/lib/auth-session'
 import type { GoalSummary } from '@/lib/types'
 import { cn } from '@/lib/utils'
-import { PlusIcon } from 'lucide-react'
+import { MoreVertical, PlusIcon } from 'lucide-react'
 import Link from 'next/link'
 
 export default async function HomePage() {
@@ -45,6 +52,35 @@ export default async function HomePage() {
                   {formatCurrencyFromCents(totalBalance)}
                 </p>
               </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  render={
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="border-white/10 bg-white/5 text-slate-100 hover:bg-white/10"
+                      aria-label="Open goal actions"
+                    />
+                  }
+                >
+                  <MoreVertical />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  className="border-white/10 bg-slate-950 text-slate-100"
+                >
+                  <DropdownMenuItem
+                    render={<Link href="/goals/new" className="w-full" />}
+                  >
+                    New goal
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    render={<Link href="/goals/archived" className="w-full" />}
+                  >
+                    Archived goals
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
               <UserMenu user={session.user} />
             </div>
           </header>

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 
 import { EditGoalForm } from '@/components/edit-goal-form'
 import { UserMenu } from '@/components/user-menu'
@@ -19,6 +19,9 @@ export default async function EditGoalPage({ params }: EditGoalPageProps) {
   const goal = await getGoalBySlug(goalSlug)
   if (!goal) {
     notFound()
+  }
+  if (goal.isArchived) {
+    redirect(`/goals/${goal.slug}`)
   }
   const championOptions = await getAllowedUsers()
   const defaultChampionIds = goal.champions.map((champion) => champion.id)
