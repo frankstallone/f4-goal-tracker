@@ -54,7 +54,7 @@ export function DeleteGoalDialog({
     if (state.status === 'error' && state.message) {
       toast.error(state.message)
     }
-  }, [router, state.message, state.status])
+  }, [router, state.message, state.status, successRedirect])
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>

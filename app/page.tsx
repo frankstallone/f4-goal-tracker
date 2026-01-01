@@ -2,7 +2,7 @@ import { GoalCard } from '@/components/goal-card'
 import { GoalEmptyState } from '@/components/goal-empty-state'
 import { RedirectToast } from '@/components/redirect-toast'
 import { UserMenu } from '@/components/user-menu'
-import { Button, buttonVariants } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
