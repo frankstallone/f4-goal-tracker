@@ -3,6 +3,50 @@ import withPWA from 'next-pwa'
 
 const isDev = process.env.NODE_ENV === 'development'
 
+type RemotePattern = NonNullable<
+  NonNullable<NextConfig['images']>['remotePatterns']
+>[number]
+
+const storageRemotePatterns: RemotePattern[] = []
+const seenPatterns = new Set<string>()
+
+const addRemotePattern = (pattern: RemotePattern | null) => {
+  if (!pattern) return
+  const key = `${pattern.protocol ?? ''}://${pattern.hostname}${pattern.port ?? ''}`
+  if (seenPatterns.has(key)) return
+  seenPatterns.add(key)
+  storageRemotePatterns.push(pattern)
+}
+
+const urlToPattern = (value?: string) => {
+  if (!value) return null
+  try {
+    const parsed = new URL(value)
+    return {
+      protocol: parsed.protocol.replace(':', ''),
+      hostname: parsed.hostname,
+    } satisfies RemotePattern
+  } catch {
+    return null
+  }
+}
+
+addRemotePattern(urlToPattern(process.env.S3_PUBLIC_URL_BASE))
+addRemotePattern(urlToPattern(process.env.S3_ENDPOINT))
+addRemotePattern(urlToPattern(process.env.BLOB_PUBLIC_URL_BASE))
+addRemotePattern(urlToPattern(process.env.LOCAL_STORAGE_PUBLIC_URL_BASE))
+
+if (
+  !process.env.S3_PUBLIC_URL_BASE &&
+  process.env.S3_BUCKET &&
+  process.env.S3_REGION
+) {
+  addRemotePattern({
+    protocol: 'https',
+    hostname: `${process.env.S3_BUCKET}.s3.${process.env.S3_REGION}.amazonaws.com`,
+  })
+}
+
 const nextConfig: NextConfig = {
   reactCompiler: true,
   turbopack: {},
@@ -28,6 +72,7 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'lh6.googleusercontent.com',
       },
+      ...storageRemotePatterns,
     ],
   },
 }
