@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 
 import { UnarchiveGoalDialog } from '@/components/archive-goal-dialog'
-import { DeleteGoalDialog } from '@/components/delete-goal-dialog'
+import { GoalActionsMenu } from '@/components/goal-actions-menu'
 import { GoalTransactionsTable } from '@/components/goal-transactions-table'
 import { PageHeader } from '@/components/page-header'
 import { RedirectToast } from '@/components/redirect-toast'
@@ -10,12 +10,6 @@ import { UserMenu } from '@/components/user-menu'
 import { Badge } from '@/components/ui/badge'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { ButtonGroup } from '@/components/ui/button-group'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import { requireServerSession } from '@/lib/auth-session'
 import { getArchivedGoalById, getGoalTransactions } from '@/lib/data/goals'
 import {
@@ -26,7 +20,6 @@ import {
 import { splitDepositsWithdrawals, sumAmounts } from '@/lib/ledger'
 import { getUserLabel } from '@/lib/user-label'
 import { cn } from '@/lib/utils'
-import { Ellipsis } from 'lucide-react'
 
 interface ArchivedGoalDetailPageProps {
   params: Promise<{ goalId: string }>
@@ -85,30 +78,13 @@ export default async function ArchivedGoalDetailPage({
                 goalName={goal.name}
                 trigger={<Button />}
               />
-              <DropdownMenu>
-                <DropdownMenuTrigger
-                  render={
-                    <Button
-                      variant="default"
-                      size="icon"
-                      aria-label="Open goal actions"
-                    />
-                  }
-                >
-                  <Ellipsis />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="end"
-                  className="border-white/10 bg-slate-950 text-slate-100"
-                >
-                  <DeleteGoalDialog
-                    goalId={goal.id}
-                    goalName={goal.name}
-                    successRedirect="/goals/archived?toast=goal-deleted"
-                    trigger={<DropdownMenuItem variant="destructive" />}
-                  />
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <GoalActionsMenu
+                goalId={goal.id}
+                goalSlug={goal.slug}
+                goalName={goal.name}
+                variant="archived-detail"
+                deleteRedirect="/goals/archived?toast=goal-deleted"
+              />
             </ButtonGroup>
             <UserMenu user={user} />
           </PageHeader>
