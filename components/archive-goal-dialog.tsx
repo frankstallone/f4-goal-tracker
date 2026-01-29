@@ -81,7 +81,7 @@ export function ArchiveGoalDialog({
     if (state.status === 'error' && state.message) {
       toast.error(state.message)
     }
-  }, [router, state.message, state.status])
+  }, [router, setOpen, state.message, state.status])
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
@@ -155,7 +155,7 @@ export function UnarchiveGoalDialog({
     if (state.status === 'error' && state.message) {
       toast.error(state.message)
     }
-  }, [goalSlug, router, state.message, state.status])
+  }, [goalSlug, router, setOpen, state.message, state.status])
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
