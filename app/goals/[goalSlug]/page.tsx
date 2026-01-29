@@ -1,25 +1,14 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-import {
-  ArchiveGoalDialog,
-  UnarchiveGoalDialog,
-} from '@/components/archive-goal-dialog'
-import { DeleteGoalDialog } from '@/components/delete-goal-dialog'
+import { GoalActionsMenu } from '@/components/goal-actions-menu'
 import { GoalTransactionsTable } from '@/components/goal-transactions-table'
 import { PageHeader } from '@/components/page-header'
 import { RedirectToast } from '@/components/redirect-toast'
 import { UserMenu } from '@/components/user-menu'
 import { Badge } from '@/components/ui/badge'
-import { Button, buttonVariants } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
 import { ButtonGroup } from '@/components/ui/button-group'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import { requireServerSession } from '@/lib/auth-session'
 import { getGoalBySlug, getGoalTransactions } from '@/lib/data/goals'
 import {
@@ -29,7 +18,6 @@ import {
 import { splitDepositsWithdrawals, sumAmounts } from '@/lib/ledger'
 import { getUserLabel } from '@/lib/user-label'
 import { cn } from '@/lib/utils'
-import { Ellipsis } from 'lucide-react'
 
 interface GoalDetailPageProps {
   params: Promise<{ goalSlug: string }>
@@ -79,37 +67,14 @@ export default async function GoalDetailPage({ params }: GoalDetailPageProps) {
             </Link>
             <div className="flex gap-2 items-center">
               {isArchived ? (
-                <DropdownMenu>
-                  <DropdownMenuTrigger
-                    render={
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="border-white/10 bg-white/5 text-slate-100 hover:bg-white/10"
-                        aria-label="Open goal actions"
-                      />
-                    }
-                  >
-                    <Ellipsis />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="end"
-                    className="border-white/10 bg-slate-950 text-slate-100"
-                  >
-                    <UnarchiveGoalDialog
-                      goalId={goal.id}
-                      goalSlug={goal.slug}
-                      goalName={goal.name}
-                      trigger={<DropdownMenuItem />}
-                    />
-                    <DropdownMenuSeparator className="bg-white/10" />
-                    <DeleteGoalDialog
-                      goalId={goal.id}
-                      goalName={goal.name}
-                      trigger={<DropdownMenuItem variant="destructive" />}
-                    />
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <GoalActionsMenu
+                  goalId={goal.id}
+                  goalSlug={goal.slug}
+                  goalName={goal.name}
+                  variant="archived"
+                  triggerVariant="outline"
+                  triggerClassName="border-white/10 bg-white/5 text-slate-100 hover:bg-white/10"
+                />
               ) : (
                 <ButtonGroup>
                   <Link
@@ -118,45 +83,12 @@ export default async function GoalDetailPage({ params }: GoalDetailPageProps) {
                   >
                     Add transaction
                   </Link>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger
-                      render={
-                        <Button
-                          variant="default"
-                          size="icon"
-                          aria-label="Open goal actions"
-                        />
-                      }
-                    >
-                      <Ellipsis />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                      align="end"
-                      className="border-white/10 bg-slate-950 text-slate-100"
-                    >
-                      <DropdownMenuItem
-                        render={
-                          <Link
-                            href={`/goals/${goal.slug}/edit`}
-                            className="w-full"
-                          />
-                        }
-                      >
-                        Edit goal
-                      </DropdownMenuItem>
-                      <ArchiveGoalDialog
-                        goalSlug={goal.slug}
-                        goalName={goal.name}
-                        trigger={<DropdownMenuItem />}
-                      />
-                      <DropdownMenuSeparator className="bg-white/10" />
-                      <DeleteGoalDialog
-                        goalId={goal.id}
-                        goalName={goal.name}
-                        trigger={<DropdownMenuItem variant="destructive" />}
-                      />
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <GoalActionsMenu
+                    goalId={goal.id}
+                    goalSlug={goal.slug}
+                    goalName={goal.name}
+                    variant="active"
+                  />
                 </ButtonGroup>
               )}
               <UserMenu user={user} />
