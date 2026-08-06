@@ -24,14 +24,36 @@ describe('getServerSession', () => {
 
   it('returns the session from Better Auth using request headers', async () => {
     const mockHeaders = new Headers()
+    const mockUser = {
+      id: '1',
+      createdAt: new Date('2026-01-01T00:00:00.000Z'),
+      updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+      email: 'test@example.com',
+      emailVerified: true,
+      name: 'Test User',
+      image: null,
+    }
+    const mockSession = {
+      id: 'session-1',
+      createdAt: new Date('2026-01-01T00:00:00.000Z'),
+      updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+      userId: mockUser.id,
+      expiresAt: new Date('2026-02-01T00:00:00.000Z'),
+      token: 'test-token',
+      ipAddress: null,
+      userAgent: null,
+    }
     vi.mocked(headers).mockResolvedValue(mockHeaders)
-    vi.mocked(auth.api.getSession).mockResolvedValue({ user: { id: '1' } })
+    vi.mocked(auth.api.getSession).mockResolvedValue({
+      session: mockSession,
+      user: mockUser,
+    })
 
     const session = await getServerSession()
 
     expect(headers).toHaveBeenCalledTimes(1)
     expect(auth.api.getSession).toHaveBeenCalledWith({ headers: mockHeaders })
-    expect(session).toEqual({ user: { id: '1' } })
+    expect(session).toEqual({ session: mockSession, user: mockUser })
   })
 })
 

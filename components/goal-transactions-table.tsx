@@ -3,55 +3,50 @@
 import * as React from 'react'
 import { useRouter } from 'next/navigation'
 import {
+  createColumnHelper,
+  createSortedRowModel,
   flexRender,
-  getCoreRowModel,
-  getSortedRowModel,
-  type ColumnDef,
+  rowSortingFeature,
+  tableFeatures,
   type SortingState,
-  useReactTable,
+  useTable,
 } from '@tanstack/react-table'
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react'
 
 import { formatLongDate, formatSignedCurrencyFromCents } from '@/lib/format'
 import type { GoalTransaction } from '@/lib/types'
 
-const columns: ColumnDef<GoalTransaction>[] = [
-  {
-    accessorKey: 'description',
+const features = tableFeatures({
+  rowSortingFeature,
+  sortedRowModel: createSortedRowModel(),
+})
+const columnHelper = createColumnHelper<typeof features, GoalTransaction>()
+const columns = columnHelper.columns([
+  columnHelper.accessor('description', {
     header: 'Description',
-    cell: ({ row }) => (
-      <div className="font-medium text-slate-100">
-        {row.getValue('description')}
-      </div>
+    cell: (info) => (
+      <div className="font-medium text-slate-100">{info.getValue()}</div>
     ),
-  },
-  {
-    accessorKey: 'transactedOn',
+  }),
+  columnHelper.accessor('transactedOn', {
     header: 'Date',
-    cell: ({ row }) => (
+    cell: (info) => (
       <span className="text-sm text-slate-300">
-        {formatLongDate(row.getValue('transactedOn'))}
+        {formatLongDate(info.getValue())}
       </span>
     ),
-  },
-  {
-    accessorKey: 'amountCents',
+  }),
+  columnHelper.accessor('amountCents', {
     header: 'Amount',
-    cell: ({ row }) => {
-      const amount = row.getValue<number>('amountCents')
-      return formatSignedCurrencyFromCents(amount)
-    },
-  },
-  {
-    accessorKey: 'createdBy',
+    cell: (info) => formatSignedCurrencyFromCents(info.getValue()),
+  }),
+  columnHelper.accessor('createdBy', {
     header: 'By',
-    cell: ({ row }) => (
-      <span className="text-sm text-slate-300">
-        {row.getValue('createdBy') || '—'}
-      </span>
+    cell: (info) => (
+      <span className="text-sm text-slate-300">{info.getValue() || '—'}</span>
     ),
-  },
-]
+  }),
+])
 
 type GoalTransactionsTableProps = {
   goalSlug: string
@@ -69,14 +64,12 @@ export function GoalTransactionsTable({
   ])
   const router = useRouter()
 
-  // eslint-disable-next-line react-hooks/incompatible-library
-  const table = useReactTable({
+  const table = useTable({
+    features,
     data: transactions,
     columns,
     state: { sorting },
     onSortingChange: setSorting,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
   })
 
   return (
@@ -164,7 +157,7 @@ export function GoalTransactionsTable({
                         }
                   }
                 >
-                  {row.getVisibleCells().map((cell) => (
+                  {row.getAllCells().map((cell) => (
                     <td
                       key={cell.id}
                       className={`px-4 py-3 ${

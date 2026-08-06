@@ -7,13 +7,14 @@ import { getServerSession } from '@/lib/auth-session'
 export default async function SignInPage({
   searchParams,
 }: {
-  searchParams?: { error?: string }
+  searchParams?: Promise<{ error?: string }>
 }) {
   const session = await getServerSession()
   if (session) {
     redirect('/')
   }
-  const isUnauthorized = searchParams?.error === 'unauthorized'
+  const resolvedSearchParams = searchParams ? await searchParams : undefined
+  const isUnauthorized = resolvedSearchParams?.error === 'unauthorized'
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100">

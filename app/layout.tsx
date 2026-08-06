@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { DM_Sans } from 'next/font/google'
+import { SerwistProvider } from '@serwist/turbopack/react'
 import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
@@ -77,8 +78,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${dmSans.variable} dark`}>
       <body className="antialiased font-sans">
-        {children}
-        <Toaster />
+        <SerwistProvider
+          swUrl="/serwist/sw.js"
+          disable={process.env.NODE_ENV !== 'production'}
+          cacheOnNavigation={false}
+        >
+          {children}
+          <Toaster />
+        </SerwistProvider>
       </body>
     </html>
   )
