@@ -1,7 +1,5 @@
 import type { NextConfig } from 'next'
-import withPWA from 'next-pwa'
-
-const isDev = process.env.NODE_ENV === 'development'
+import { withSerwist } from '@serwist/turbopack'
 
 type ImageRemotePattern = {
   protocol?: 'http' | 'https'
@@ -84,11 +82,4 @@ const nextConfig: NextConfig = {
   },
 }
 
-const pwaConfig = withPWA({
-  dest: 'public',
-  register: true,
-  skipWaiting: true,
-  disable: isDev,
-})
-
-export default pwaConfig(nextConfig as NextConfig)
+export default withSerwist(nextConfig)

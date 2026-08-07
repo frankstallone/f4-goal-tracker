@@ -2,7 +2,7 @@
   "name": "F4 Goal Tracker",
   "short_name": "F4 Goals",
   "description": "Goal-based savings tracking for the F4 household.",
-  "start_url": "https://f4-goal-tracker.vercel.app/",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#020617",
