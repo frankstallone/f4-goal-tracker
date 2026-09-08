@@ -6,7 +6,6 @@ import { UserMenu } from '@/components/user-menu'
 import { buttonVariants } from '@/components/ui/button'
 import { requireServerSession } from '@/lib/auth-session'
 import { getAllowedUsers } from '@/lib/users'
-import { cn } from '@/lib/utils'
 
 export default async function NewGoalPage() {
   const sessionPromise = requireServerSession()
@@ -22,38 +21,26 @@ export default async function NewGoalPage() {
     image: session.user?.image ?? null,
   }
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100">
-      <div className="relative overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(148,163,184,0.18),transparent_55%)]" />
-        <div className="pointer-events-none absolute -top-32 left-0 h-72 w-72 rounded-full bg-emerald-400/10 blur-3xl" />
-        <div className="relative mx-auto w-full max-w-4xl px-6 py-12">
-          <PageHeader
-            title="Create a savings goal"
-            description="Set up a new bucket and attach a target, champions, and a cover image from Unsplash or your own upload."
-          >
-            <div className="flex gap-2 items-center">
-              <Link
-                href="/"
-                className={cn(
-                  buttonVariants({ variant: 'outline' }),
-                  'border-white/10 bg-white/5 text-slate-100 hover:bg-white/10',
-                )}
-              >
-                Back
-              </Link>
-              <UserMenu user={user} />
-            </div>
-          </PageHeader>
+    <main className="bg-background text-foreground">
+      <div className="mx-auto w-full max-w-3xl px-6 py-8 sm:py-12">
+        <PageHeader
+          title="Create a savings goal"
+          description="Name your goal and choose who will help it grow."
+        >
+          <div className="flex flex-wrap items-center gap-2">
+            <Link href="/" className={buttonVariants({ variant: 'ghost' })}>
+              Back to goals
+            </Link>
+            <UserMenu user={user} />
+          </div>
+        </PageHeader>
 
-          <section className="mt-8">
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-6 sm:p-8">
-              <NewGoalForm
-                championOptions={championOptions}
-                defaultChampionIds={defaultChampionIds}
-              />
-            </div>
-          </section>
-        </div>
+        <section className="mt-10 sm:mt-12">
+          <NewGoalForm
+            championOptions={championOptions}
+            defaultChampionIds={defaultChampionIds}
+          />
+        </section>
       </div>
     </main>
   )

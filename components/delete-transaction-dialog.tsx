@@ -60,10 +60,10 @@ export function DeleteTransactionDialog({
       >
         Delete transaction
       </AlertDialogTrigger>
-      <AlertDialogContent className="border-white/10 bg-slate-950 text-slate-100">
+      <AlertDialogContent className="border-white/10 bg-popover text-foreground">
         <AlertDialogHeader>
           <AlertDialogTitle>Delete this transaction?</AlertDialogTitle>
-          <AlertDialogDescription className="text-slate-400">
+          <AlertDialogDescription className="text-muted-foreground">
             This will permanently remove “{description}”. This action cannot be
             undone.
           </AlertDialogDescription>

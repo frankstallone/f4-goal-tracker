@@ -1,37 +1,50 @@
 'use client'
 
 import * as React from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import {
   createColumnHelper,
   createSortedRowModel,
   flexRender,
   rowSortingFeature,
+  sortFn_alphanumeric,
+  sortFn_text,
   tableFeatures,
   type SortingState,
   useTable,
 } from '@tanstack/react-table'
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react'
 
+import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { formatLongDate, formatSignedCurrencyFromCents } from '@/lib/format'
 import type { GoalTransaction } from '@/lib/types'
+import { cn } from '@/lib/utils'
 
 const features = tableFeatures({
   rowSortingFeature,
   sortedRowModel: createSortedRowModel(),
+  sortFns: { alphanumeric: sortFn_alphanumeric, text: sortFn_text },
 })
 const columnHelper = createColumnHelper<typeof features, GoalTransaction>()
 const columns = columnHelper.columns([
   columnHelper.accessor('description', {
     header: 'Description',
     cell: (info) => (
-      <div className="font-medium text-slate-100">{info.getValue()}</div>
+      <div className="font-medium text-foreground">{info.getValue()}</div>
     ),
   }),
   columnHelper.accessor('transactedOn', {
     header: 'Date',
+    sortDescFirst: true,
     cell: (info) => (
-      <span className="text-sm text-slate-300">
+      <span className="text-sm text-muted-foreground">
         {formatLongDate(info.getValue())}
       </span>
     ),
@@ -43,7 +56,9 @@ const columns = columnHelper.columns([
   columnHelper.accessor('createdBy', {
     header: 'By',
     cell: (info) => (
-      <span className="text-sm text-slate-300">{info.getValue() || '—'}</span>
+      <span className="text-sm text-muted-foreground">
+        {info.getValue() || '—'}
+      </span>
     ),
   }),
 ])
@@ -71,23 +86,71 @@ export function GoalTransactionsTable({
     state: { sorting },
     onSortingChange: setSorting,
   })
+  const sortHeader = table
+    .getHeaderGroups()[0]
+    ?.headers.find((header) => header.column.id === sorting[0]?.id)
 
   return (
     <>
       <div className="flex items-center justify-between gap-4">
-        <div>
-          <p className="text-xs uppercase tracking-widest text-slate-400">
-            Transactions
-          </p>
-          <h2 className="text-2xl font-semibold">Goal ledger</h2>
-        </div>
-        <div className="rounded-full bg-white/10 px-4 py-2 text-xs uppercase tracking-widest text-slate-100">
-          {transactions.length} entries
-        </div>
+        <h2 className="text-xl font-medium">Goal ledger</h2>
+        <p className="text-sm text-muted-foreground">
+          {transactions.length}{' '}
+          {transactions.length === 1 ? 'entry' : 'entries'}
+        </p>
       </div>
-      <div className="mt-6 overflow-hidden rounded-2xl border border-white/10 bg-slate-900/60">
-        <table className="w-full text-left text-sm text-slate-200">
-          <thead className="border-b border-white/10 bg-slate-900/80">
+      <div className="mt-2 flex justify-end sm:hidden">
+        <DropdownMenu>
+          <DropdownMenuTrigger render={<Button variant="ghost" />}>
+            Sort:{' '}
+            {sortHeader
+              ? flexRender(
+                  sortHeader.column.columnDef.header,
+                  sortHeader.getContext(),
+                )
+              : 'Default order'}
+            {sorting[0] ? (
+              sorting[0].desc ? (
+                <ArrowDown aria-label="Descending" />
+              ) : (
+                <ArrowUp aria-label="Ascending" />
+              )
+            ) : (
+              <ArrowUpDown aria-hidden="true" />
+            )}
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {table.getHeaderGroups().flatMap((headerGroup) =>
+              headerGroup.headers.map((header) => {
+                const isSorted = header.column.getIsSorted()
+                return (
+                  <DropdownMenuItem
+                    key={header.id}
+                    className="min-h-11 justify-between"
+                    onClick={header.column.getToggleSortingHandler()}
+                  >
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext(),
+                    )}
+                    {isSorted ? (
+                      isSorted === 'asc' ? (
+                        <ArrowUp aria-label="Ascending" />
+                      ) : (
+                        <ArrowDown aria-label="Descending" />
+                      )
+                    ) : null}
+                  </DropdownMenuItem>
+                )
+              }),
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      <div className="mt-5 overflow-x-auto rounded-lg border border-border">
+        <table className="w-full text-left text-sm text-foreground">
+          <caption className="sr-only">Goal transactions</caption>
+          <thead className="border-b border-border">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -95,12 +158,28 @@ export function GoalTransactionsTable({
                   return (
                     <th
                       key={header.id}
-                      className="px-4 py-3 text-xs font-semibold uppercase tracking-widest text-slate-400"
+                      scope="col"
+                      aria-sort={
+                        isSorted === 'asc'
+                          ? 'ascending'
+                          : isSorted === 'desc'
+                            ? 'descending'
+                            : undefined
+                      }
+                      className={cn(
+                        'px-4 text-sm font-medium text-muted-foreground',
+                        (header.column.id === 'transactedOn' ||
+                          header.column.id === 'createdBy') &&
+                          'hidden sm:table-cell',
+                      )}
                     >
                       {header.isPlaceholder ? null : (
                         <button
                           type="button"
-                          className="flex items-center gap-2"
+                          className={cn(
+                            'flex min-h-11 w-full items-center gap-2 rounded-sm py-3 text-left hover:text-foreground focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring',
+                            header.column.id === 'amountCents' && 'justify-end',
+                          )}
                           onClick={header.column.getToggleSortingHandler()}
                         >
                           {flexRender(
@@ -109,12 +188,21 @@ export function GoalTransactionsTable({
                           )}
                           {isSorted ? (
                             isSorted === 'asc' ? (
-                              <ArrowUp className="h-3 w-3" />
+                              <ArrowUp
+                                className="size-3.5"
+                                aria-hidden="true"
+                              />
                             ) : (
-                              <ArrowDown className="h-3 w-3" />
+                              <ArrowDown
+                                className="size-3.5"
+                                aria-hidden="true"
+                              />
                             )
                           ) : (
-                            <ArrowUpDown className="h-3 w-3 text-slate-500" />
+                            <ArrowUpDown
+                              className="size-3.5"
+                              aria-hidden="true"
+                            />
                           )}
                         </button>
                       )}
@@ -129,13 +217,11 @@ export function GoalTransactionsTable({
               table.getRowModel().rows.map((row) => (
                 <tr
                   key={row.id}
-                  className={`border-b border-white/10 transition last:border-b-0 ${
-                    readOnly
-                      ? ''
-                      : 'cursor-pointer hover:bg-white/5 focus-visible:bg-white/5'
-                  }`}
-                  tabIndex={readOnly ? undefined : 0}
-                  role={readOnly ? undefined : 'link'}
+                  className={cn(
+                    'even:bg-white/3',
+                    !readOnly &&
+                      'cursor-pointer hover:bg-white/9 focus-within:bg-white/9',
+                  )}
                   onClick={
                     readOnly
                       ? undefined
@@ -144,30 +230,44 @@ export function GoalTransactionsTable({
                             `/goals/${goalSlug}/transactions/${row.original.id}`,
                           )
                   }
-                  onKeyDown={
-                    readOnly
-                      ? undefined
-                      : (event) => {
-                          if (event.key === 'Enter' || event.key === ' ') {
-                            event.preventDefault()
-                            router.push(
-                              `/goals/${goalSlug}/transactions/${row.original.id}`,
-                            )
-                          }
-                        }
-                  }
                 >
                   {row.getAllCells().map((cell) => (
                     <td
                       key={cell.id}
-                      className={`px-4 py-3 ${
-                        cell.column.id === 'amountCents' ? 'text-right' : ''
-                      }`}
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
+                      className={cn(
+                        'px-4 py-3 align-top',
+                        cell.column.id === 'amountCents' &&
+                          'text-right whitespace-nowrap tabular-nums',
+                        cell.column.id === 'transactedOn' &&
+                          'whitespace-nowrap',
+                        (cell.column.id === 'transactedOn' ||
+                          cell.column.id === 'createdBy') &&
+                          'hidden sm:table-cell',
                       )}
+                    >
+                      {!readOnly && cell.column.id === 'description' ? (
+                        <Link
+                          href={`/goals/${goalSlug}/transactions/${row.original.id}`}
+                          className="block rounded-sm underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+                          onClick={(event) => event.stopPropagation()}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </Link>
+                      ) : (
+                        flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )
+                      )}
+                      {cell.column.id === 'description' ? (
+                        <div className="mt-1 space-y-1 text-xs leading-relaxed text-muted-foreground sm:hidden">
+                          <p>{formatLongDate(row.original.transactedOn)}</p>
+                          <p>By {row.original.createdBy || '—'}</p>
+                        </div>
+                      ) : null}
                     </td>
                   ))}
                 </tr>
@@ -176,7 +276,7 @@ export function GoalTransactionsTable({
               <tr>
                 <td
                   colSpan={columns.length}
-                  className="px-4 py-6 text-center text-sm text-slate-400"
+                  className="px-4 py-8 text-left text-sm text-muted-foreground"
                 >
                   {readOnly
                     ? 'No transactions yet.'

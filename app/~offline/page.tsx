@@ -1,12 +1,12 @@
 export default function OfflinePage() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-slate-100">
-      <div className="max-w-md text-center">
-        <p className="text-xs uppercase tracking-widest text-slate-400">
-          Offline
-        </p>
-        <h1 className="mt-3 text-3xl font-semibold">Connection unavailable</h1>
-        <p className="mt-3 text-sm text-slate-300">
+    <main className="flex min-h-screen items-center bg-background px-6 text-foreground">
+      <div className="mx-auto w-full max-w-lg py-12">
+        <p className="text-sm text-muted-foreground">Offline</p>
+        <h1 className="mt-4 text-3xl font-medium tracking-tight">
+          Connection unavailable
+        </h1>
+        <p className="mt-4 text-base leading-relaxed text-muted-foreground">
           Reconnect to load the latest goal and transaction data.
         </p>
       </div>

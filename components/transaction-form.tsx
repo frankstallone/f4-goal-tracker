@@ -138,37 +138,14 @@ export function TransactionForm({
   }, [userOptions])
 
   return (
-    <Form action={formAction} className="space-y-6">
-      <FieldGroup className="grid gap-5 sm:grid-cols-2">
-        <Field>
-          <FieldLabel htmlFor="description">Description</FieldLabel>
-          <FieldContent>
-            <Textarea
-              id="description"
-              name="description"
-              placeholder="e.g. September transfer"
-              className={cn(
-                'min-h-[88px] bg-white/5',
-                state.fieldErrors?.description && 'border-rose-400',
-              )}
-              value={formValues.description}
-              onChange={(event) =>
-                setFormValues((prev) => ({
-                  ...prev,
-                  description: event.target.value,
-                }))
-              }
-              required
-            />
-            <FieldError>{state.fieldErrors?.description}</FieldError>
-          </FieldContent>
-        </Field>
+    <Form action={formAction} className="space-y-8">
+      <FieldGroup className="grid gap-6 sm:grid-cols-2">
         <Field>
           <FieldLabel htmlFor="amount">Amount</FieldLabel>
           <FieldContent>
             <InputGroup
               className={cn(
-                'bg-white/5',
+                'bg-input/30',
                 state.fieldErrors?.amount && 'border-rose-400',
               )}
             >
@@ -217,13 +194,13 @@ export function TransactionForm({
               <SelectTrigger
                 id="direction"
                 className={cn(
-                  'w-full justify-between bg-white/5 text-slate-100',
+                  'w-full justify-between',
                   state.fieldErrors?.direction && 'border-rose-400',
                 )}
               >
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="border-white/10 bg-slate-950 text-slate-100">
+              <SelectContent>
                 <SelectItem value="deposit">Deposit</SelectItem>
                 <SelectItem value="withdrawal">Withdrawal</SelectItem>
               </SelectContent>
@@ -231,6 +208,33 @@ export function TransactionForm({
             <FieldError>{state.fieldErrors?.direction}</FieldError>
           </FieldContent>
         </Field>
+      </FieldGroup>
+
+      <Field>
+        <FieldLabel htmlFor="description">Description</FieldLabel>
+        <FieldContent>
+          <Textarea
+            id="description"
+            name="description"
+            placeholder="e.g. September transfer"
+            className={cn(
+              'min-h-24',
+              state.fieldErrors?.description && 'border-rose-400',
+            )}
+            value={formValues.description}
+            onChange={(event) =>
+              setFormValues((prev) => ({
+                ...prev,
+                description: event.target.value,
+              }))
+            }
+            required
+          />
+          <FieldError>{state.fieldErrors?.description}</FieldError>
+        </FieldContent>
+      </Field>
+
+      <FieldGroup className="grid gap-6 sm:grid-cols-2">
         <Field>
           <FieldLabel htmlFor="transactedOn">Date</FieldLabel>
           <FieldContent>
@@ -239,11 +243,12 @@ export function TransactionForm({
               <PopoverTrigger
                 render={
                   <Button
+                    id="transactedOn"
                     type="button"
                     variant="outline"
                     className={cn(
-                      'w-full justify-between bg-white/5 text-left font-normal text-slate-100',
-                      !selectedDate && 'text-slate-500',
+                      'w-full justify-start text-left font-normal',
+                      !selectedDate && 'text-muted-foreground',
                       state.fieldErrors?.transactedOn && 'border-rose-400',
                     )}
                   />
@@ -251,7 +256,11 @@ export function TransactionForm({
               >
                 {formattedDate}
               </PopoverTrigger>
-              <PopoverContent className="w-auto border-white/10 bg-slate-950 p-2 text-slate-100">
+              <PopoverContent
+                aria-label="Choose date"
+                align="start"
+                className="w-auto p-2"
+              >
                 <Calendar
                   mode="single"
                   selected={selectedDate}
@@ -263,49 +272,50 @@ export function TransactionForm({
             <FieldError>{state.fieldErrors?.transactedOn}</FieldError>
           </FieldContent>
         </Field>
-      </FieldGroup>
-
-      <Field>
-        <FieldLabel htmlFor="createdBy">By (optional)</FieldLabel>
-        <FieldContent>
-          <Combobox
-            value={formValues.createdBy}
-            onValueChange={(value) =>
-              setFormValues((prev) => ({
-                ...prev,
-                createdBy: value ?? '',
-              }))
-            }
-            inputValue={formValues.createdBy}
-            onInputValueChange={(value) =>
-              setFormValues((prev) => ({
-                ...prev,
-                createdBy: value ?? '',
-              }))
-            }
-            items={createdByItems}
-          >
-            <ComboboxInput
-              id="createdBy"
-              name="createdBy"
-              placeholder={
-                createdByItems.length ? 'Select a person...' : 'Enter a name...'
+        <Field>
+          <FieldLabel htmlFor="createdBy">By (optional)</FieldLabel>
+          <FieldContent>
+            <Combobox
+              value={formValues.createdBy}
+              onValueChange={(value) =>
+                setFormValues((prev) => ({
+                  ...prev,
+                  createdBy: value ?? '',
+                }))
               }
-              showClear
-            />
-            <ComboboxContent>
-              <ComboboxEmpty>No matches found.</ComboboxEmpty>
-              <ComboboxList>
-                {(item) => (
-                  <ComboboxItem key={item} value={item}>
-                    {item}
-                  </ComboboxItem>
-                )}
-              </ComboboxList>
-            </ComboboxContent>
-          </Combobox>
-        </FieldContent>
-      </Field>
+              inputValue={formValues.createdBy}
+              onInputValueChange={(value) =>
+                setFormValues((prev) => ({
+                  ...prev,
+                  createdBy: value ?? '',
+                }))
+              }
+              items={createdByItems}
+            >
+              <ComboboxInput
+                id="createdBy"
+                name="createdBy"
+                placeholder={
+                  createdByItems.length
+                    ? 'Select a person...'
+                    : 'Enter a name...'
+                }
+                showClear
+              />
+              <ComboboxContent>
+                <ComboboxEmpty>No matches found.</ComboboxEmpty>
+                <ComboboxList>
+                  {(item) => (
+                    <ComboboxItem key={item} value={item}>
+                      {item}
+                    </ComboboxItem>
+                  )}
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
+          </FieldContent>
+        </Field>
+      </FieldGroup>
 
       {state.message ? (
         <p
@@ -318,7 +328,7 @@ export function TransactionForm({
         </p>
       ) : null}
 
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-end gap-3 pt-2">
         <Button
           type="button"
           variant="ghost"
