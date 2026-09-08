@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.1.0](https://github.com/frankstallone/f4-goal-tracker/compare/v1.0.0...v1.1.0) (2026-09-08)
+
+
+### Features
+
+* harden better-auth defaults ([#17](https://github.com/frankstallone/f4-goal-tracker/issues/17)) ([4db1e44](https://github.com/frankstallone/f4-goal-tracker/commit/4db1e44e68f04232fa80aee578ae2ad884b9da07))
+* refine savings goals with Scandinavian design ([9c175d2](https://github.com/frankstallone/f4-goal-tracker/commit/9c175d2549e86fee8ca57e08317deec524fdc7e9))
+* refine savings goals with Scandinavian design ([82b5f2d](https://github.com/frankstallone/f4-goal-tracker/commit/82b5f2dd41d91e58a81967fdcfb9cc55477c2f2d))
+
+
+### Bug Fixes
+
+* correct Release Please token condition ([6056f35](https://github.com/frankstallone/f4-goal-tracker/commit/6056f3527ee2a2c93f125451ba97bdbd65c6a53f))
+* correct Release Please token condition ([f527536](https://github.com/frankstallone/f4-goal-tracker/commit/f5275361f950da943767d47c96147123bdfa16b3))
+* keep archive dialog open ([990bd0d](https://github.com/frankstallone/f4-goal-tracker/commit/990bd0d578d5ab3ef2c02dbaf699fd6cc2bd424f))
+
 ## 1.0.0 (2026-01-02)
 
 
