@@ -53,3 +53,7 @@
 - Optional: `ALLOWED_EMAILS=you@example.com,partner@example.com` to restrict access.
 - Storage providers are configured via `STORAGE_PROVIDER` plus provider-specific env vars (see `.env.example`).
 - Vercel deploys from this repo; keep env vars synced across dev/preview/prod.
+- This repository is the shared source for the deployed app. Keep credentials,
+  database contents, uploads, and local Vercel/Neon links outside Git.
+- Preview uses its own database and storage. Keep production credentials scoped
+  to Production; do not run migrations or seeds as part of the build.

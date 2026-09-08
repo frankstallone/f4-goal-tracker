@@ -59,6 +59,9 @@ Then visit `http://localhost:3000` and sign in with a Google account (must be on
 
 ## Local Development
 
+Use Node.js 24. Database commands load `.env.local` when it exists. Variables
+already set in the process environment take precedence.
+
 ```bash
 npm install
 npm run dev
@@ -162,13 +165,47 @@ Database access uses Kysely with a typed schema in `lib/db-types.ts`. The `getDb
 - `npm run start` – run the build locally.
 - `npm run db:migrate` – apply SQL migrations from `db/migrations`.
 - `npm run db:seed` – load anonymized sample goals.
+- `npm run vercel:preview-alias -- <hostname>` – assign a stable hostname to the latest ready preview in the linked Vercel project.
 - `npm run lint` – ESLint.
 - `npm run test` – Vitest.
 - `npm run format` – Prettier.
 
 ## Deployment
 
-Deploy on Vercel. Ensure `DATABASE_URL` and `UNSPLASH_ACCESS_KEY` are set for dev/preview/prod environments.
+Use this repository as the source for the deployed app. Keep credentials in
+Vercel environment settings or an ignored `.env.local` file. Database contents,
+uploads, and the local `.vercel` and `.neon` project links stay outside Git.
+
+Connect the Vercel project to this repository and use `main` for Production.
+Set all required authentication, database, Unsplash, and storage variables for
+each environment. Keep production credentials scoped to Production. Set
+`ALLOWED_EMAILS` to restrict access to the deployed app.
+
+Give Preview a separate database and storage with sample data. A database branch
+copied from Production also copies its data; use a clean preview database when
+real goals and transactions must stay private. Apply Better Auth's schema and app
+migrations when setting up that database. Do not run migrations or seeds during
+the build.
+
+Set `BETTER_AUTH_URL` to each environment's app URL and register the matching
+Google OAuth callback URL (`<app-url>/api/auth/callback/google`). For Vercel Blob,
+set `BLOB_PUBLIC_URL_BASE` to that environment's store URL before building so
+cover images can load.
+
+### Stable preview URL
+
+Install the Vercel CLI and run `vercel link` to select the intended project. After
+a preview deployment is ready, assign your preview hostname:
+
+```bash
+npm run vercel:preview-alias -- your-preview.vercel.app
+```
+
+You can also set `PREVIEW_ALIAS` in the command environment. The command selects
+the latest ready preview in the linked project and updates the alias. Use a
+hostname reserved for Preview. Set the Preview `BETTER_AUTH_URL` and Google OAuth
+callback to this stable URL. Re-run the command after each preview deployment
+that should receive the alias.
 
 ## Release Automation
 
