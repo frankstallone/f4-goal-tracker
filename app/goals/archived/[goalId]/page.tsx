@@ -19,7 +19,6 @@ import {
 } from '@/lib/format'
 import { splitDepositsWithdrawals, sumAmounts } from '@/lib/ledger'
 import { getUserLabel } from '@/lib/user-label'
-import { cn } from '@/lib/utils'
 
 interface ArchivedGoalDetailPageProps {
   params: Promise<{ goalId: string }>
@@ -52,131 +51,104 @@ export default async function ArchivedGoalDetailPage({
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100">
+    <main className="min-h-screen bg-background text-foreground">
       <RedirectToast />
-      <div className="relative overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(148,163,184,0.18),transparent_55%)]" />
-        <div className="pointer-events-none absolute -top-32 left-0 h-72 w-72 rounded-full bg-amber-400/10 blur-3xl" />
-        <div className="relative mx-auto w-full max-w-5xl px-6 py-12">
-          <PageHeader
-            title={goal.name}
-            description={goal.description || undefined}
+      <div className="mx-auto w-full max-w-6xl px-6 py-8 sm:px-10 sm:py-12">
+        <PageHeader
+          title={goal.name}
+          description={goal.description || undefined}
+        >
+          <Link
+            href="/goals/archived"
+            className={buttonVariants({ variant: 'outline' })}
           >
-            <Link
-              href="/goals/archived"
-              className={cn(
-                buttonVariants({ variant: 'outline' }),
-                'border-white/10 bg-white/5 text-slate-100 hover:bg-white/10',
-              )}
-            >
-              Back
-            </Link>
-            <ButtonGroup>
-              <UnarchiveGoalDialog
-                goalId={goal.id}
-                goalSlug={goal.slug}
-                goalName={goal.name}
-                trigger={<Button />}
-              />
-              <GoalActionsMenu
-                goalId={goal.id}
-                goalSlug={goal.slug}
-                goalName={goal.name}
-                variant="archived-detail"
-                deleteRedirect="/goals/archived?toast=goal-deleted"
-              />
-            </ButtonGroup>
-            <UserMenu user={user} />
-          </PageHeader>
-
-          <section className="mt-8 grid gap-8 lg:grid-cols-[1.4fr_1fr]">
-            <div className="space-y-6">
-              <div className="flex flex-wrap items-center gap-3">
-                {goal.champions.length ? (
-                  goal.champions.map((champion) => (
-                    <Badge
-                      key={champion.id}
-                      variant="secondary"
-                      className="bg-white/10 text-white"
-                    >
-                      {getUserLabel(champion)}
-                    </Badge>
-                  ))
-                ) : (
-                  <Badge variant="secondary" className="bg-white/10 text-white">
-                    Shared Goal
-                  </Badge>
-                )}
-                <Badge variant="secondary" className="bg-white/10 text-white">
-                  {transactions.length} transactions
-                </Badge>
-                <Badge
-                  variant="secondary"
-                  className="bg-amber-500/20 text-amber-100"
-                >
-                  Archived
-                </Badge>
-              </div>
-
-              <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
-                {goal.archivedAt
-                  ? `Archived on ${formatLongDate(goal.archivedAt)}.`
-                  : 'This goal is archived and read-only.'}
-              </div>
-
-              <div className="rounded-3xl border border-white/10 bg-white/5 p-6 w-fit">
-                <p className="text-xs uppercase tracking-widest text-slate-400">
-                  Current balance
-                </p>
-                <p className="text-3xl font-semibold text-white">
-                  {formatCurrencyFromCents(balance)}
-                </p>
-                {goal.targetAmountCents ? (
-                  <p className="text-sm text-slate-400">
-                    Target: {formatCurrencyFromCents(goal.targetAmountCents)}
-                  </p>
-                ) : null}
-              </div>
-            </div>
-
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-6 flex flex-col gap-4 justify-between">
-              <div className="flex flex-col">
-                <p className="text-xs uppercase tracking-widest text-slate-400">
-                  Deposits
-                </p>
-                <p className=" text-xl font-semibold">
-                  {formatSignedCurrencyFromCents(deposits)}
-                </p>
-              </div>
-              <div className="flex flex-col">
-                <p className="text-xs uppercase tracking-widest text-slate-400">
-                  Withdrawals
-                </p>
-                <p className="text-xl font-semibold">
-                  {withdrawals > 0
-                    ? `-${formatSignedCurrencyFromCents(withdrawals)}`
-                    : formatSignedCurrencyFromCents(withdrawals)}
-                </p>
-              </div>
-
-              <div className="flex flex-col">
-                <p className="text-xs uppercase tracking-widest text-slate-400">
-                  Net movement
-                </p>
-                <p className="text-xl font-semibold text-white">
-                  {formatSignedCurrencyFromCents(balance)}
-                </p>
-              </div>
-            </div>
-          </section>
-
-          <div className="mt-10">
-            <GoalTransactionsTable
+            Archived goals
+          </Link>
+          <ButtonGroup>
+            <UnarchiveGoalDialog
+              goalId={goal.id}
               goalSlug={goal.slug}
-              transactions={transactions}
-              readOnly
+              goalName={goal.name}
+              trigger={<Button />}
             />
+            <GoalActionsMenu
+              goalId={goal.id}
+              goalSlug={goal.slug}
+              goalName={goal.name}
+              variant="archived-detail"
+              deleteRedirect="/goals/archived?toast=goal-deleted"
+            />
+          </ButtonGroup>
+          <UserMenu user={user} />
+        </PageHeader>
+
+        <section className="mt-8 sm:mt-12" aria-label="Goal summary">
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+            <p className="text-sm text-muted-foreground">
+              {goal.champions.length ? (
+                <>
+                  {goal.champions.length === 1 ? 'Champion' : 'Champions'}{' '}
+                  <span className="text-foreground">
+                    {goal.champions.map(getUserLabel).join(', ')}
+                  </span>
+                </>
+              ) : (
+                'Shared goal'
+              )}
+            </p>
+            <Badge
+              variant="secondary"
+              className="rounded-md bg-amber-500/15 text-amber-200"
+            >
+              Archived
+            </Badge>
           </div>
+
+          <p className="mt-4 text-sm leading-relaxed text-amber-200">
+            {goal.archivedAt
+              ? `Archived on ${formatLongDate(goal.archivedAt)}. This goal is read-only.`
+              : 'This goal is archived and read-only.'}
+          </p>
+
+          <dl className="mt-8 grid gap-x-8 gap-y-5 sm:grid-cols-3 lg:grid-cols-5 lg:items-start">
+            <div className="col-span-full lg:col-span-2">
+              <dt className="text-sm text-muted-foreground">Current balance</dt>
+              <dd className="mt-2 text-4xl font-medium tracking-tight tabular-nums sm:text-5xl">
+                {formatCurrencyFromCents(balance)}
+              </dd>
+              {goal.targetAmountCents ? (
+                <dd className="mt-2 text-sm text-muted-foreground">
+                  Target: {formatCurrencyFromCents(goal.targetAmountCents)}
+                </dd>
+              ) : null}
+            </div>
+            <div className="flex items-baseline justify-between gap-4 sm:block">
+              <dt className="text-sm text-muted-foreground">Deposits</dt>
+              <dd className="text-xl font-medium tabular-nums sm:mt-2">
+                {formatSignedCurrencyFromCents(deposits)}
+              </dd>
+            </div>
+            <div className="flex items-baseline justify-between gap-4 sm:block">
+              <dt className="text-sm text-muted-foreground">Withdrawals</dt>
+              <dd className="text-xl font-medium tabular-nums sm:mt-2">
+                {formatSignedCurrencyFromCents(-withdrawals)}
+              </dd>
+            </div>
+            <div className="flex items-baseline justify-between gap-4 sm:block">
+              <dt className="text-sm text-muted-foreground">Net movement</dt>
+              <dd className="text-xl font-medium tabular-nums sm:mt-2">
+                {formatSignedCurrencyFromCents(balance)}
+              </dd>
+            </div>
+          </dl>
+        </section>
+
+        <div className="mt-10 sm:mt-14">
+          <GoalTransactionsTable
+            goalSlug={goal.slug}
+            transactions={transactions}
+            readOnly
+          />
         </div>
       </div>
     </main>

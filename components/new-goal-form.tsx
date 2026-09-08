@@ -1,7 +1,8 @@
 'use client'
 
 import * as React from 'react'
-import Image from 'next/image'
+import { CoverImagePreview } from '@/components/CoverImagePreview'
+import { CoverImageResult } from '@/components/CoverImageResult'
 import { useRouter } from 'next/navigation'
 import { addGoalAction, type AddGoalState } from '@/app/actions'
 import { Button } from '@/components/ui/button'
@@ -266,7 +267,8 @@ export function NewGoalForm({
   const handleUploadChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    const file = event.target.files?.[0]
+    const input = event.currentTarget
+    const file = input.files?.[0]
     if (!file) {
       return
     }
@@ -280,13 +282,13 @@ export function NewGoalForm({
       setUploadError(
         'Unsupported file type. Choose a JPG, PNG, WEBP, GIF, or AVIF.',
       )
-      event.currentTarget.value = ''
+      input.value = ''
       return
     }
 
     if (file.size > MAX_UPLOAD_BYTES) {
       setUploadError(`Image is too large. Max ${maxUploadMegabytes}MB.`)
-      event.currentTarget.value = ''
+      input.value = ''
       return
     }
 
@@ -320,7 +322,7 @@ export function NewGoalForm({
       )
     } finally {
       setIsUploading(false)
-      event.currentTarget.value = ''
+      input.value = ''
     }
   }
 
@@ -330,8 +332,8 @@ export function NewGoalForm({
   }
 
   return (
-    <Form action={formAction} className="space-y-6">
-      <FieldGroup className="grid gap-5 sm:grid-cols-2">
+    <Form action={formAction} className="space-y-8">
+      <FieldGroup className="grid gap-6 sm:grid-cols-2">
         <Field>
           <FieldLabel htmlFor="name">Goal name</FieldLabel>
           <FieldContent>
@@ -340,7 +342,7 @@ export function NewGoalForm({
               name="name"
               placeholder="Education Fund"
               className={cn(
-                'bg-white/5',
+                'bg-input/30',
                 state.fieldErrors?.name && 'border-rose-400',
               )}
               required
@@ -349,11 +351,13 @@ export function NewGoalForm({
           </FieldContent>
         </Field>
         <Field>
-          <FieldLabel htmlFor="targetAmount">Target amount</FieldLabel>
+          <FieldLabel htmlFor="targetAmount">
+            Target amount (optional)
+          </FieldLabel>
           <FieldContent>
             <InputGroup
               className={cn(
-                'bg-white/5',
+                'bg-input/30',
                 state.fieldErrors?.targetAmount && 'border-rose-400',
               )}
             >
@@ -378,142 +382,14 @@ export function NewGoalForm({
       </FieldGroup>
 
       <Field>
-        <FieldLabel htmlFor="description">Description</FieldLabel>
+        <FieldLabel htmlFor="description">Description (optional)</FieldLabel>
         <FieldContent>
           <Textarea
             id="description"
             name="description"
             placeholder="Tuition and living expenses."
-            className="min-h-[88px] bg-white/5"
+            className="min-h-24"
           />
-        </FieldContent>
-      </Field>
-
-      <Field>
-        <FieldLabel>Cover image</FieldLabel>
-        <FieldContent>
-          <div className="space-y-4">
-            <div className="flex flex-wrap gap-3">
-              <Input
-                value={searchQuery}
-                onChange={(event) => setSearchQuery(event.target.value)}
-                placeholder="Search Unsplash (e.g. mountain, home, college)"
-                className="flex-1 bg-white/5"
-              />
-              <Button
-                type="button"
-                onClick={handleSearch}
-                disabled={isSearching || !shouldSearchUnsplash(searchQuery)}
-              >
-                {isSearching ? 'Searching...' : 'Search'}
-              </Button>
-            </div>
-            {searchError ? (
-              <p className="text-sm text-rose-300">{searchError}</p>
-            ) : null}
-            <div className="grid gap-3 sm:grid-cols-3">
-              {searchResults.map((photo) => (
-                <button
-                  key={photo.id}
-                  type="button"
-                  onClick={() => handleSelectImage(photo)}
-                  className={cn(
-                    'group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5',
-                    coverImageId === photo.id && 'ring-2 ring-emerald-300/70',
-                  )}
-                >
-                  {photo.urls.small ? (
-                    <Image
-                      src={photo.urls.small}
-                      alt={photo.alt}
-                      width={240}
-                      height={160}
-                      className="h-24 w-full object-cover transition duration-500 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="h-24 w-full bg-slate-900/40" />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent" />
-                  <span className="absolute bottom-2 left-2 text-xs text-slate-200">
-                    {photo.user.name}
-                  </span>
-                </button>
-              ))}
-              {!searchResults.length && searchQuery ? (
-                <div className="rounded-2xl border border-dashed border-white/10 p-4 text-sm text-slate-400 sm:col-span-3">
-                  No results yet. Try another search keyword.
-                </div>
-              ) : null}
-            </div>
-
-            {coverImageUrl ? (
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-slate-300">
-                <p className="text-xs uppercase tracking-widest text-slate-400">
-                  Selected image
-                </p>
-                {coverImageAttributionName && coverImageAttributionUrl ? (
-                  <p className="mt-2 text-sm text-slate-200">
-                    Photo by{' '}
-                    <a
-                      href={coverImageAttributionUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="underline underline-offset-4"
-                    >
-                      {coverImageAttributionName}
-                    </a>{' '}
-                    on{' '}
-                    <a
-                      href={`https://unsplash.com/?utm_source=f4_goal_tracker&utm_medium=referral`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="underline underline-offset-4"
-                    >
-                      Unsplash
-                    </a>
-                    .
-                  </p>
-                ) : (
-                  <p className="mt-2 text-sm text-slate-200">
-                    Uploaded image selected.
-                  </p>
-                )}
-                <div className="mt-3">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={resetCoverImage}
-                  >
-                    Remove cover image
-                  </Button>
-                </div>
-              </div>
-            ) : null}
-
-            <div className="space-y-2">
-              <FieldLabel htmlFor="coverImageUpload">
-                Upload your own image (optional)
-              </FieldLabel>
-              <Input
-                id="coverImageUpload"
-                ref={fileInputRef}
-                type="file"
-                accept={ALLOWED_IMAGE_CONTENT_TYPES.join(',')}
-                className="bg-white/5"
-                onChange={handleUploadChange}
-                disabled={isUploading}
-              />
-              <p className="text-xs text-slate-400">
-                JPG, PNG, WEBP, GIF, or AVIF. Max {maxUploadMegabytes}MB.
-              </p>
-              {isUploading ? (
-                <p className="text-sm text-slate-200">Uploading…</p>
-              ) : null}
-              {uploadError ? (
-                <p className="text-sm text-rose-300">{uploadError}</p>
-              ) : null}
-            </div>
-          </div>
         </FieldContent>
       </Field>
 
@@ -528,9 +404,12 @@ export function NewGoalForm({
             onInputValueChange={setChampionQuery}
             items={championItems}
           >
-            <ComboboxChips ref={championAnchor} aria-label="Champions">
+            <ComboboxChips ref={championAnchor}>
               {champions.map((championId) => (
-                <ComboboxChip key={championId}>
+                <ComboboxChip
+                  key={championId}
+                  removeLabel={`Remove ${championLabels.get(championId) ?? 'champion'}`}
+                >
                   {championLabels.get(championId) ?? 'Unknown'}
                 </ComboboxChip>
               ))}
@@ -559,6 +438,110 @@ export function NewGoalForm({
         </FieldContent>
       </Field>
 
+      <section aria-labelledby="cover-image-heading" className="space-y-6 pt-4">
+        <div className="space-y-2">
+          <h2 id="cover-image-heading" className="text-base font-medium">
+            Cover image{' '}
+            <span className="font-normal text-muted-foreground">
+              (optional)
+            </span>
+          </h2>
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            Choose a photo that brings your goal to life.
+          </p>
+        </div>
+
+        <Field>
+          <FieldLabel htmlFor="coverImageSearch">Search Unsplash</FieldLabel>
+          <FieldContent>
+            <div className="flex items-center gap-2">
+              <Input
+                id="coverImageSearch"
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                placeholder="Mountain, home, college…"
+                className="flex-1"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleSearch}
+                disabled={isSearching || !shouldSearchUnsplash(searchQuery)}
+              >
+                {isSearching ? 'Searching…' : 'Search'}
+              </Button>
+            </div>
+            {searchError ? (
+              <p role="status" className="text-sm text-rose-300">
+                {searchError}
+              </p>
+            ) : null}
+          </FieldContent>
+        </Field>
+
+        {searchResults.length ? (
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+            {searchResults.map((photo) => (
+              <CoverImageResult
+                key={photo.id}
+                src={photo.urls.small}
+                alt={photo.alt}
+                photographer={photo.user.name ?? 'Unsplash'}
+                selected={coverImageId === photo.id}
+                onSelect={() => handleSelectImage(photo)}
+              />
+            ))}
+          </div>
+        ) : searchQuery && !isSearching && !searchError ? (
+          <p role="status" className="text-sm text-muted-foreground">
+            No results yet. Try another search.
+          </p>
+        ) : null}
+
+        {coverImageUrl ? (
+          <CoverImagePreview
+            src={coverImageUrl}
+            alt="Selected cover image"
+            attributionName={coverImageAttributionName}
+            attributionUrl={coverImageAttributionUrl}
+            onRemove={resetCoverImage}
+          />
+        ) : null}
+
+        <Field>
+          <FieldLabel htmlFor="coverImageUpload">
+            Upload your own image
+          </FieldLabel>
+          <FieldContent>
+            <Input
+              id="coverImageUpload"
+              ref={fileInputRef}
+              type="file"
+              accept={ALLOWED_IMAGE_CONTENT_TYPES.join(',')}
+              aria-describedby="cover-image-upload-hint"
+              onChange={handleUploadChange}
+              disabled={isUploading}
+            />
+            <p
+              id="cover-image-upload-hint"
+              className="text-xs leading-relaxed text-muted-foreground"
+            >
+              JPG, PNG, WEBP, GIF, or AVIF. Max {maxUploadMegabytes}MB.
+            </p>
+            {isUploading ? (
+              <p role="status" className="text-sm text-muted-foreground">
+                Uploading…
+              </p>
+            ) : null}
+            {uploadError ? (
+              <p role="alert" className="text-sm text-rose-300">
+                {uploadError}
+              </p>
+            ) : null}
+          </FieldContent>
+        </Field>
+      </section>
+
       <input type="hidden" name="coverImageUrl" value={coverImageUrl} />
       <input type="hidden" name="coverImageSource" value={coverImageSource} />
       <input
@@ -584,7 +567,7 @@ export function NewGoalForm({
         </p>
       ) : null}
 
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center justify-end gap-3 pt-2">
         <Button type="button" variant="ghost" onClick={() => router.back()}>
           Cancel
         </Button>

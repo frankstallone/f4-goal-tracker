@@ -65,7 +65,6 @@ export function ArchiveGoalDialog({
     [isControlled, onOpenChange],
   )
   const router = useRouter()
-  const hasCustomTrigger = Boolean(trigger)
   const shouldRenderTrigger = trigger !== null
   const triggerElement = trigger ?? <Button variant="outline" />
   const [state, formAction, pending] = React.useActionState(
@@ -86,17 +85,14 @@ export function ArchiveGoalDialog({
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       {shouldRenderTrigger ? (
-        <AlertDialogTrigger
-          render={triggerElement}
-          nativeButton={hasCustomTrigger ? false : undefined}
-        >
+        <AlertDialogTrigger render={triggerElement}>
           Archive goal
         </AlertDialogTrigger>
       ) : null}
-      <AlertDialogContent className="border-white/10 bg-slate-950 text-slate-100">
+      <AlertDialogContent className="border-white/10 bg-popover text-foreground">
         <AlertDialogHeader>
           <AlertDialogTitle>Archive {goalName}?</AlertDialogTitle>
-          <AlertDialogDescription className="text-slate-400">
+          <AlertDialogDescription className="text-muted-foreground">
             This will keep the goal and its transactions, but prevent edits
             until it is restored.
           </AlertDialogDescription>
@@ -139,7 +135,6 @@ export function UnarchiveGoalDialog({
     [isControlled, onOpenChange],
   )
   const router = useRouter()
-  const hasCustomTrigger = Boolean(trigger)
   const shouldRenderTrigger = trigger !== null
   const triggerElement = trigger ?? <Button variant="outline" />
   const [state, formAction, pending] = React.useActionState(
@@ -160,17 +155,14 @@ export function UnarchiveGoalDialog({
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       {shouldRenderTrigger ? (
-        <AlertDialogTrigger
-          render={triggerElement}
-          nativeButton={hasCustomTrigger ? false : undefined}
-        >
+        <AlertDialogTrigger render={triggerElement}>
           Restore goal
         </AlertDialogTrigger>
       ) : null}
-      <AlertDialogContent className="border-white/10 bg-slate-950 text-slate-100">
+      <AlertDialogContent className="border-white/10 bg-popover text-foreground">
         <AlertDialogHeader>
           <AlertDialogTitle>Restore {goalName}?</AlertDialogTitle>
-          <AlertDialogDescription className="text-slate-400">
+          <AlertDialogDescription className="text-muted-foreground">
             This will move the goal back into the active list and re-enable
             edits.
           </AlertDialogDescription>

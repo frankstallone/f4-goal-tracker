@@ -10,6 +10,7 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
@@ -58,34 +59,35 @@ export function UserMenu({ user, className }: UserMenuProps) {
           <button
             type="button"
             className={cn(
-              'flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-100 transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30',
+              'flex h-11 w-11 items-center justify-center rounded-full bg-secondary text-foreground transition-colors hover:bg-white/14 aria-expanded:bg-white/14 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
               className,
             )}
             aria-label="Open user menu"
           />
         }
       >
-        <Avatar className="h-9 w-9">
+        <Avatar className="h-full w-full">
           {user.image ? (
             <AvatarImage src={user.image} alt={user.name ?? 'User avatar'} />
           ) : null}
-          <AvatarFallback>{getInitials(user)}</AvatarFallback>
+          <AvatarFallback className="bg-transparent">
+            {getInitials(user)}
+          </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="w-64 border-white/10 bg-slate-950 text-slate-100"
+        className="w-64 border-white/10 bg-popover text-foreground"
       >
         <DropdownMenuGroup>
-          <DropdownMenuItem
-            disabled
-            className="flex flex-col items-start gap-0.5 text-left"
-          >
-            <span className="text-sm font-semibold text-slate-100">
+          <DropdownMenuLabel className="flex flex-col items-start gap-1 py-3 text-left">
+            <span className="text-sm font-semibold text-foreground">
               {user.name ?? 'Account'}
             </span>
-            <span className="text-xs text-slate-400">{user.email ?? ''}</span>
-          </DropdownMenuItem>
+            <span className="break-all text-xs text-muted-foreground">
+              {user.email ?? ''}
+            </span>
+          </DropdownMenuLabel>
         </DropdownMenuGroup>
         <DropdownMenuSeparator className="bg-white/10" />
         <DropdownMenuItem

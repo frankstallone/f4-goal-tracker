@@ -66,7 +66,7 @@ export function GoalActionsMenu({
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"
-          className="border-white/10 bg-slate-950 text-slate-100"
+          className="border-white/10 bg-popover text-foreground"
         >
           {showEdit ? (
             <DropdownMenuItem

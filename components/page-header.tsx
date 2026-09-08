@@ -22,14 +22,14 @@ export function PageHeader({
   return (
     <header
       className={cn(
-        'flex flex-col-reverse gap-6 lg:flex-row lg:items-start lg:justify-between',
+        'flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between',
         className,
       )}
     >
-      <div className="space-y-3">
+      <div className="min-w-0 space-y-3">
         <h1
           className={cn(
-            'text-4xl font-semibold tracking-tight',
+            'text-3xl font-medium tracking-tight sm:text-4xl',
             titleClassName,
           )}
         >
@@ -38,7 +38,7 @@ export function PageHeader({
         {description ? (
           <p
             className={cn(
-              'max-w-2xl text-sm text-slate-400',
+              'max-w-2xl text-base leading-relaxed text-muted-foreground',
               descriptionClassName,
             )}
           >
@@ -47,7 +47,7 @@ export function PageHeader({
         ) : null}
       </div>
       {children ? (
-        <div className="flex flex-wrap items-center justify-end gap-4">
+        <div className="flex shrink-0 flex-wrap items-center gap-3 sm:justify-end">
           {children}
         </div>
       ) : null}
