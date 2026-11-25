@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/frankstallone/f4-goal-tracker/compare/v1.1.0...v1.1.1) (2026-11-25)
+
+
+### Bug Fixes
+
+* patch Next.js and authentication dependencies ([#24](https://github.com/frankstallone/f4-goal-tracker/issues/24)) ([cd4b9a3](https://github.com/frankstallone/f4-goal-tracker/commit/cd4b9a3b651e8046c0106e63f35086382c353d7c))
+
 ## [1.1.0](https://github.com/frankstallone/f4-goal-tracker/compare/v1.0.0...v1.1.0) (2026-09-08)
 
 
